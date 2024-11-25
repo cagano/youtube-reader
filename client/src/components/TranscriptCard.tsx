@@ -119,7 +119,7 @@ const TranscriptView: React.FC<TranscriptViewProps> = ({
         </Tooltip>
       </TooltipProvider>
     </div>
-    <ScrollArea className={`w-full rounded-lg border bg-muted/10 p-6 ${isFullScreen ? 'h-[90vh]' : 'h-[600px]'} transition-all duration-300 ease-out`}>
+    <ScrollArea className={`w-full rounded-lg border bg-muted/10 p-6 ${isFullScreen ? 'h-[calc(90vh-4rem)]' : 'h-[600px]'} transition-all duration-300 ease-out`}>
       <div className="prose prose-gray dark:prose-invert max-w-none" style={{ fontSize: `${fontSize}px` }}>
         <ReactMarkdown className="whitespace-pre-wrap break-words">
           {content}
@@ -256,7 +256,7 @@ export default function TranscriptCard({
       </Tabs>
 
       <Dialog open={isFullScreen} onOpenChange={setIsFullScreen}>
-        <DialogContent className="max-w-[95vw] w-full h-[95vh] p-6">
+        <DialogContent className="max-w-[95vw] w-full h-[95vh] p-4 overflow-hidden">
           <DialogTitle className="sr-only">Full Screen Transcript View</DialogTitle>
           <DialogDescription className="sr-only">
             Full screen view of the transcript with enhanced readability
@@ -264,7 +264,7 @@ export default function TranscriptCard({
           <Tabs 
             value={activeTab}
             onValueChange={(value) => onSwitchTab?.(value as 'original' | 'formatted')}
-            className="w-full h-full flex flex-col"
+            className="w-full h-full flex flex-col overflow-hidden"
           >
             <div className="flex items-center justify-between mb-6">
               <TabsList>
