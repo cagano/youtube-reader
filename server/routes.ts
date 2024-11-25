@@ -82,20 +82,38 @@ export function registerRoutes(app: Express) {
           .from(formatTemplates)
           .where(eq(formatTemplates.id, templateId))
           .limit(1);
+        if (!template.length) {
+          throw new Error('Template not found');
+        }
         prompt = template[0].prompt;
-      } else {
+      } else if (customPrompt) {
         prompt = customPrompt;
+      } else {
+        throw new Error('No prompt or template provided');
       }
 
-      const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+      console.log('Using prompt:', prompt);
+      const model = genAI.getGenerativeModel({ model: "gemini-pro" }); // Change to gemini-pro
+      console.log('Model initialized');
+      
       const result = await model.generateContent(
-        `${prompt}\n\nTranscript:\n${transcript}`
+        `${prompt}
+
+Transcript:
+${transcript}`
       );
+      console.log('Content generated');
+      
       const formattedText = result.response.text();
+      console.log('Response text extracted');
 
       res.json({ formattedTranscript: formattedText });
     } catch (error) {
-      res.status(500).json({ error: "Failed to process transcript" });
+      console.error('Transcript processing error:', error);
+      res.status(500).json({ 
+        error: "Failed to process transcript",
+        details: error instanceof Error ? error.message : String(error)
+      });
     }
   });
 
