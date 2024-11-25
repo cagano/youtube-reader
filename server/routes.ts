@@ -51,6 +51,7 @@ export function registerRoutes(app: Express) {
       console.error('Failed to fetch English transcript:', error);
       // Try fetching default language transcript as fallback
       try {
+        const { videoId } = req.params;
         console.log('Attempting to fetch transcript in default language');
         const transcript = await YoutubeTranscript.fetchTranscript(videoId);
         console.log('Fallback transcript fetched successfully');
