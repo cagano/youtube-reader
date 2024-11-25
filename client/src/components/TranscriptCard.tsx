@@ -5,7 +5,7 @@ import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { Dialog, DialogContent } from "./ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "./ui/dialog";
 import { Skeleton } from "./ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 
@@ -199,6 +199,10 @@ export default function TranscriptCard({
 
       <Dialog open={isFullScreen} onOpenChange={setIsFullScreen}>
         <DialogContent className="max-w-[95vw] w-full h-[95vh] p-6">
+          <DialogTitle className="sr-only">Full Screen Transcript View</DialogTitle>
+          <DialogDescription className="sr-only">
+            Full screen view of the transcript with enhanced readability
+          </DialogDescription>
           <Tabs 
             value={activeTab}
             onValueChange={(value) => onSwitchTab?.(value as 'original' | 'formatted')}
