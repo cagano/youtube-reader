@@ -27,6 +27,11 @@ interface TranscriptCardProps {
   videoTitle?: string;
 }
 
+interface ExportProgress {
+  status: 'idle' | 'processing' | 'success' | 'error';
+  message: string;
+}
+
 type ExportFormat = 'pdf' | 'markdown' | 'text';
 
 interface TranscriptViewProps {
@@ -145,10 +150,23 @@ export default function TranscriptCard({
 
   type ExportFormat = 'pdf' | 'markdown' | 'text';
 
+  const [exportProgress, setExportProgress] = useState<ExportProgress>({
+    status: 'idle',
+    message: ''
+  });
+
   const handleExport = async (format: ExportFormat) => {
     const text = activeTab === 'original' ? original : formatted;
-    if (!text) return;
+    if (!text) {
+      toast({
+        title: "Error",
+        description: "No content available to export",
+        variant: "destructive"
+      });
+      return;
+    }
 
+    setExportProgress({ status: 'processing', message: `Preparing ${format.toUpperCase()} export...` });
     const timestamp = new Date().toISOString().split('T')[0];
     const title = videoTitle || 'transcript';
     const sanitizedTitle = title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
@@ -156,30 +174,52 @@ export default function TranscriptCard({
     try {
       switch (format) {
         case 'pdf': {
+          setExportProgress({ status: 'processing', message: 'Generating PDF...' });
           const doc = new jsPDF();
           
-          // Add title
+          // Add title and metadata
           doc.setFontSize(16);
           doc.text(title, 20, 20);
           
           // Add metadata
           doc.setFontSize(12);
           doc.text(`Exported on: ${timestamp}`, 20, 30);
+          doc.text(`Source: ${activeTab === 'original' ? 'Original' : 'Formatted'} Transcript`, 20, 40);
+          
+          // Set document properties
+          doc.setProperties({
+            title: title,
+            subject: `YouTube Transcript - ${activeTab === 'original' ? 'Original' : 'Formatted'}`,
+            creator: 'YouTube Reader',
+            author: 'YouTube Reader',
+            keywords: 'transcript,youtube,content',
+            creationDate: new Date()
+          });
           
           // Add content with word wrap
           doc.setFontSize(12);
           const textLines = doc.splitTextToSize(text, 170);
-          doc.text(textLines, 20, 40);
+          doc.text(textLines, 20, 50);
           
           // Save PDF
           doc.save(`${sanitizedTitle}_${timestamp}.pdf`);
+          setExportProgress({ status: 'success', message: 'PDF exported successfully!' });
           break;
         }
         case 'markdown': {
+          setExportProgress({ status: 'processing', message: 'Generating Markdown...' });
           const mdContent = `---
 title: ${title}
 date: ${timestamp}
+type: ${activeTab === 'original' ? 'Original' : 'Formatted'} Transcript
+source: YouTube Reader
 ---
+
+# ${title}
+
+_Generated on: ${timestamp}_
+
+## Content
 
 ${text}`;
           const blob = new Blob([mdContent], { type: 'text/markdown' });
@@ -191,11 +231,18 @@ ${text}`;
           a.click();
           document.body.removeChild(a);
           URL.revokeObjectURL(url);
+          setExportProgress({ status: 'success', message: 'Markdown exported successfully!' });
           break;
         }
         case 'text': {
+          setExportProgress({ status: 'processing', message: 'Generating text file...' });
           const txtContent = `Title: ${title}
 Date: ${timestamp}
+Type: ${activeTab === 'original' ? 'Original' : 'Formatted'} Transcript
+Source: YouTube Reader
+
+Content:
+--------
 
 ${text}`;
           const blob = new Blob([txtContent], { type: 'text/plain' });
@@ -207,23 +254,34 @@ ${text}`;
           a.click();
           document.body.removeChild(a);
           URL.revokeObjectURL(url);
+          setExportProgress({ status: 'success', message: 'Text file exported successfully!' });
           break;
         }
       }
       
       toast({
         title: "Success",
-        description: `Exported transcript as ${format.toUpperCase()}`,
-        duration: 2000
+        description: exportProgress.message,
+        duration: 3000
       });
     } catch (error) {
       console.error('Export error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      setExportProgress({ 
+        status: 'error', 
+        message: `Failed to export as ${format.toUpperCase()}: ${errorMessage}` 
+      });
       toast({
         title: "Error",
-        description: `Failed to export as ${format.toUpperCase()}`,
+        description: exportProgress.message,
         variant: "destructive",
-        duration: 3000
+        duration: 4000
       });
+    } finally {
+      // Reset progress after a delay
+      setTimeout(() => {
+        setExportProgress({ status: 'idle', message: '' });
+      }, 3000);
     }
   };
 
