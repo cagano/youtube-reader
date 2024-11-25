@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useViewportSize } from "@/hooks/use-viewport-size";
 import ReactMarkdown from "react-markdown";
 import { Copy, Maximize2, Minimize2 } from "lucide-react";
+import { ExportButton } from "./ExportButton";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
@@ -303,7 +304,10 @@ export default function TranscriptCard({
                 </Tooltip>
               </TooltipProvider>
 
-              {/* Export functionality removed */}
+              <ExportButton 
+                content={activeTab === 'original' ? original : formatted || ''} 
+                fileName={`youtube-transcript${activeTab === 'formatted' ? '-formatted' : ''}`}
+              />
             </div>
             <TooltipProvider>
               <Tooltip>
