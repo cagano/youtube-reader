@@ -22,61 +22,127 @@ const styles = StyleSheet.create({
   page: {
     flexDirection: 'column',
     backgroundColor: '#ffffff',
-    padding: 30,
+    padding: 40,
+  },
+  section: {
+    marginBottom: 10,
   },
   text: {
-    fontSize: 10,
+    fontSize: 11,
     fontFamily: 'Helvetica',
-    marginBottom: 8,
-    lineHeight: 1.4,
+    marginBottom: 10,
+    lineHeight: 1.5,
+    color: '#2D3748',
   },
   heading1: {
-    fontSize: 18,
+    fontSize: 24,
     fontFamily: 'Helvetica-Bold',
-    marginBottom: 12,
-    marginTop: 18,
-    lineHeight: 1.3,
+    marginBottom: 16,
+    marginTop: 24,
+    lineHeight: 1.2,
+    color: '#1A202C',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
+    paddingBottom: 8,
   },
   heading2: {
-    fontSize: 16,
+    fontSize: 20,
     fontFamily: 'Helvetica-Bold',
-    marginBottom: 10,
-    marginTop: 16,
+    marginBottom: 14,
+    marginTop: 20,
     lineHeight: 1.3,
+    color: '#2D3748',
   },
   heading3: {
+    fontSize: 16,
+    fontFamily: 'Helvetica-Bold',
+    marginBottom: 12,
+    marginTop: 16,
+    lineHeight: 1.4,
+    color: '#4A5568',
+  },
+  heading4: {
     fontSize: 14,
     fontFamily: 'Helvetica-Bold',
-    marginBottom: 8,
-    marginTop: 12,
-    lineHeight: 1.3,
+    marginBottom: 10,
+    marginTop: 14,
+    lineHeight: 1.4,
+    color: '#4A5568',
   },
   bold: {
     fontFamily: 'Helvetica-Bold',
+    color: '#2D3748',
   },
   italic: {
     fontFamily: 'Helvetica-Oblique',
+    color: '#4A5568',
   },
   listItem: {
     flexDirection: 'row',
-    marginBottom: 6,
-    paddingLeft: 12,
+    marginBottom: 8,
+    paddingLeft: 16,
   },
   listItemBullet: {
-    width: 12,
-    marginRight: 6,
+    width: 16,
+    marginRight: 8,
+    color: '#4A5568',
   },
   listItemContent: {
     flex: 1,
+    paddingRight: 16,
+  },
+  orderedListItem: {
+    flexDirection: 'row',
+    marginBottom: 8,
+    paddingLeft: 16,
+  },
+  orderedListItemNumber: {
+    width: 24,
+    marginRight: 8,
+    color: '#4A5568',
+  },
+  blockquote: {
+    backgroundColor: '#F7FAFC',
+    borderLeftWidth: 4,
+    borderLeftColor: '#CBD5E0',
+    borderLeftStyle: 'solid',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    marginVertical: 12,
+    marginHorizontal: 0,
+    fontStyle: 'italic',
+    color: '#4A5568',
   },
   codeBlock: {
     fontFamily: 'Courier',
-    backgroundColor: '#f5f5f5',
-    padding: 6,
-    marginVertical: 6,
-    borderRadius: 3,
-    fontSize: 9,
-    lineHeight: 1.3,
+    backgroundColor: '#F7FAFC',
+    padding: 12,
+    marginVertical: 8,
+    borderRadius: 4,
+    fontSize: 10,
+    lineHeight: 1.4,
+    color: '#2D3748',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  inlineCode: {
+    fontFamily: 'Courier',
+    backgroundColor: '#F7FAFC',
+    paddingHorizontal: 4,
+    paddingVertical: 1,
+    fontSize: 10,
+    color: '#2D3748',
+    borderRadius: 2,
+  },
+  link: {
+    color: '#3182CE',
+    textDecoration: 'underline',
+  },
+  horizontalRule: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
+    borderBottomStyle: 'solid',
+    marginVertical: 16,
   },
 });
 
@@ -89,18 +155,77 @@ export function ExportButton({ content, fileName = 'transcript' }: ExportButtonP
       case 'pdf': {
         // Create PDF document
         // Custom components for markdown elements
-        const MarkdownH1 = ({ children }: { children: React.ReactNode }) => <Text style={styles.heading1}>{children}</Text>;
-        const MarkdownH2 = ({ children }: { children: React.ReactNode }) => <Text style={styles.heading2}>{children}</Text>;
-        const MarkdownH3 = ({ children }: { children: React.ReactNode }) => <Text style={styles.heading3}>{children}</Text>;
-        const MarkdownParagraph = ({ children }: { children: React.ReactNode }) => <Text style={styles.text}>{children}</Text>;
-        const MarkdownBold = ({ children }: { children: React.ReactNode }) => <Text style={styles.bold}>{children}</Text>;
-        const MarkdownItalic = ({ children }: { children: React.ReactNode }) => <Text style={styles.italic}>{children}</Text>;
-        const MarkdownCode = ({ children }: { children: React.ReactNode }) => <Text style={styles.codeBlock}>{children}</Text>;
-        const MarkdownListItem = ({ children }: { children: React.ReactNode }) => (
-          <View style={styles.listItem}>
-            <Text style={styles.listItemBullet}>• </Text>
+        const MarkdownH1 = ({ children }: { children: React.ReactNode }) => (
+          <View style={styles.section}>
+            <Text style={styles.heading1}>{children}</Text>
+          </View>
+        );
+        
+        const MarkdownH2 = ({ children }: { children: React.ReactNode }) => (
+          <View style={styles.section}>
+            <Text style={styles.heading2}>{children}</Text>
+          </View>
+        );
+        
+        const MarkdownH3 = ({ children }: { children: React.ReactNode }) => (
+          <View style={styles.section}>
+            <Text style={styles.heading3}>{children}</Text>
+          </View>
+        );
+        
+        const MarkdownH4 = ({ children }: { children: React.ReactNode }) => (
+          <View style={styles.section}>
+            <Text style={styles.heading4}>{children}</Text>
+          </View>
+        );
+        
+        const MarkdownParagraph = ({ children }: { children: React.ReactNode }) => (
+          <View style={styles.section}>
+            <Text style={styles.text}>{children}</Text>
+          </View>
+        );
+        
+        const MarkdownBold = ({ children }: { children: React.ReactNode }) => (
+          <Text style={styles.bold}>{children}</Text>
+        );
+        
+        const MarkdownItalic = ({ children }: { children: React.ReactNode }) => (
+          <Text style={styles.italic}>{children}</Text>
+        );
+        
+        const MarkdownCode = ({ children }: { children: React.ReactNode }) => (
+          <View style={styles.section}>
+            <Text style={styles.codeBlock}>{children}</Text>
+          </View>
+        );
+        
+        const MarkdownInlineCode = ({ children }: { children: React.ReactNode }) => (
+          <Text style={styles.inlineCode}>{children}</Text>
+        );
+        
+        const MarkdownListItem = ({ children, ordered, index }: { children: React.ReactNode; ordered?: boolean; index?: number }) => (
+          <View style={ordered ? styles.orderedListItem : styles.listItem}>
+            <Text style={ordered ? styles.orderedListItemNumber : styles.listItemBullet}>
+              {ordered ? `${index}. ` : '• '}
+            </Text>
             <Text style={styles.listItemContent}>{children}</Text>
           </View>
+        );
+        
+        const MarkdownBlockquote = ({ children }: { children: React.ReactNode }) => (
+          <View style={styles.section}>
+            <View style={styles.blockquote}>
+              <Text style={[styles.text, { fontStyle: 'italic' }]}>{children}</Text>
+            </View>
+          </View>
+        );
+        
+        const MarkdownLink = ({ children, href }: { children: React.ReactNode; href?: string }) => (
+          <Text style={styles.link}>{children}</Text>
+        );
+        
+        const MarkdownHR = () => (
+          <View style={styles.horizontalRule} />
         );
 
         // Configure markdown options
@@ -109,11 +234,22 @@ export function ExportButton({ content, fileName = 'transcript' }: ExportButtonP
             h1: { component: MarkdownH1 },
             h2: { component: MarkdownH2 },
             h3: { component: MarkdownH3 },
+            h4: { component: MarkdownH4 },
             p: { component: MarkdownParagraph },
             strong: { component: MarkdownBold },
             em: { component: MarkdownItalic },
             code: { component: MarkdownCode },
-            li: { component: MarkdownListItem },
+            inlineCode: { component: MarkdownInlineCode },
+            li: { 
+              component: MarkdownListItem,
+              props: (props: any) => ({
+                ordered: props.ordered,
+                index: props.index
+              })
+            },
+            blockquote: { component: MarkdownBlockquote },
+            a: { component: MarkdownLink },
+            hr: { component: MarkdownHR },
           },
         };
 
