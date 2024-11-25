@@ -1,9 +1,7 @@
-import { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useViewportSize } from "@/hooks/use-viewport-size";
 import ReactMarkdown from "react-markdown";
-import { Copy, Maximize2, Minimize2, Download, FileDown } from "lucide-react";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { jsPDF } from "jspdf";
+import { Copy, Maximize2, Minimize2 } from "lucide-react";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
@@ -27,12 +25,41 @@ interface TranscriptCardProps {
   videoTitle?: string;
 }
 
-interface ExportProgress {
-  status: 'idle' | 'processing' | 'success' | 'error';
-  message: string;
-}
+// Error boundary for handling component errors
+class TranscriptErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
 
-type ExportFormat = 'pdf' | 'markdown' | 'text';
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('TranscriptCard error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="p-4 text-center">
+          <p className="text-red-500">Something went wrong displaying the transcript.</p>
+          <button
+            onClick={() => this.setState({ hasError: false })}
+            className="mt-2 text-blue-500 underline"
+          >
+            Try again
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 interface TranscriptViewProps {
   content: string;
@@ -125,162 +152,37 @@ export default function TranscriptCard({
     }
   }, [formatted, isLoading, activeTab]);
 
+  // Enhanced copy functionality with loading state and optimized feedback
   const handleCopy = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
       const button = document.activeElement as HTMLButtonElement;
       button?.blur();
+      
+      // Improved success feedback
       toast({
-        title: "Success",
-        description: "Text copied to clipboard",
+        title: "Copied!",
+        description: "Text copied to clipboard successfully",
         duration: 2000
       });
+      
+      // Add visual feedback to the copy button
+      const copyButton = document.querySelector('[data-copy-button]');
+      if (copyButton) {
+        copyButton.classList.add('copy-success');
+        setTimeout(() => copyButton.classList.remove('copy-success'), 1000);
+      }
+      
       return true;
     } catch (error) {
       console.error('Copy failed:', error);
       toast({
         title: "Error",
-        description: "Failed to copy text. Please try again or copy manually.",
+        description: "Failed to copy text. Please try again.",
         variant: "destructive",
         duration: 3000
       });
       return false;
-    }
-  };
-
-  type ExportFormat = 'pdf' | 'markdown' | 'text';
-
-  const [exportProgress, setExportProgress] = useState<ExportProgress>({
-    status: 'idle',
-    message: ''
-  });
-
-  const handleExport = async (format: ExportFormat) => {
-    const text = activeTab === 'original' ? original : formatted;
-    if (!text) {
-      toast({
-        title: "Error",
-        description: "No content available to export",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setExportProgress({ status: 'processing', message: `Preparing ${format.toUpperCase()} export...` });
-    const timestamp = new Date().toISOString().split('T')[0];
-    const title = videoTitle || 'transcript';
-    const sanitizedTitle = title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-
-    try {
-      switch (format) {
-        case 'pdf': {
-          setExportProgress({ status: 'processing', message: 'Generating PDF...' });
-          const doc = new jsPDF();
-          
-          // Add title and metadata
-          doc.setFontSize(16);
-          doc.text(title, 20, 20);
-          
-          // Add metadata
-          doc.setFontSize(12);
-          doc.text(`Exported on: ${timestamp}`, 20, 30);
-          doc.text(`Source: ${activeTab === 'original' ? 'Original' : 'Formatted'} Transcript`, 20, 40);
-          
-          // Set document properties
-          doc.setProperties({
-            title: title,
-            subject: `YouTube Transcript - ${activeTab === 'original' ? 'Original' : 'Formatted'}`,
-            creator: 'YouTube Reader',
-            author: 'YouTube Reader',
-            keywords: 'transcript,youtube,content'
-          });
-          
-          // Add content with word wrap
-          doc.setFontSize(12);
-          const textLines = doc.splitTextToSize(text, 170);
-          doc.text(textLines, 20, 50);
-          
-          // Save PDF
-          doc.save(`${sanitizedTitle}_${timestamp}.pdf`);
-          setExportProgress({ status: 'success', message: 'PDF exported successfully!' });
-          break;
-        }
-        case 'markdown': {
-          setExportProgress({ status: 'processing', message: 'Generating Markdown...' });
-          const mdContent = `---
-title: ${title}
-date: ${timestamp}
-type: ${activeTab === 'original' ? 'Original' : 'Formatted'} Transcript
-source: YouTube Reader
----
-
-# ${title}
-
-_Generated on: ${timestamp}_
-
-## Content
-
-${text}`;
-          const blob = new Blob([mdContent], { type: 'text/markdown' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `${sanitizedTitle}_${timestamp}.md`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-          setExportProgress({ status: 'success', message: 'Markdown exported successfully!' });
-          break;
-        }
-        case 'text': {
-          setExportProgress({ status: 'processing', message: 'Generating text file...' });
-          const txtContent = `Title: ${title}
-Date: ${timestamp}
-Type: ${activeTab === 'original' ? 'Original' : 'Formatted'} Transcript
-Source: YouTube Reader
-
-Content:
---------
-
-${text}`;
-          const blob = new Blob([txtContent], { type: 'text/plain' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `${sanitizedTitle}_${timestamp}.txt`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-          setExportProgress({ status: 'success', message: 'Text file exported successfully!' });
-          break;
-        }
-      }
-      
-      toast({
-        title: "Success",
-        description: exportProgress.message,
-        duration: 3000
-      });
-    } catch (error) {
-      console.error('Export error:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      setExportProgress({ 
-        status: 'error', 
-        message: `Failed to export as ${format.toUpperCase()}: ${errorMessage}` 
-      });
-      toast({
-        title: "Error",
-        description: exportProgress.message,
-        variant: "destructive",
-        duration: 4000
-      });
-    } finally {
-      // Reset progress after a delay
-      setTimeout(() => {
-        setExportProgress({ status: 'idle', message: '' });
-      }, 3000);
     }
   };
 
@@ -401,50 +303,7 @@ ${text}`;
                 </Tooltip>
               </TooltipProvider>
 
-              <DropdownMenu.Root>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <DropdownMenu.Trigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="opacity-90 hover:opacity-100 hover:scale-105 transition-all duration-200"
-                        >
-                          <FileDown className="w-4 h-4 mr-2" />
-                          <span className="hidden sm:inline">Export</span>
-                        </Button>
-                      </DropdownMenu.Trigger>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Export transcript</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-
-                <DropdownMenu.Portal>
-                  <DropdownMenu.Content className="min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md">
-                    <DropdownMenu.Item
-                      className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-                      onClick={() => handleExport('pdf')}
-                    >
-                      Export as PDF
-                    </DropdownMenu.Item>
-                    <DropdownMenu.Item
-                      className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-                      onClick={() => handleExport('markdown')}
-                    >
-                      Export as Markdown
-                    </DropdownMenu.Item>
-                    <DropdownMenu.Item
-                      className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-                      onClick={() => handleExport('text')}
-                    >
-                      Export as Text
-                    </DropdownMenu.Item>
-                  </DropdownMenu.Content>
-                </DropdownMenu.Portal>
-              </DropdownMenu.Root>
+              {/* Export functionality removed */}
             </div>
             <TooltipProvider>
               <Tooltip>
