@@ -26,12 +26,81 @@ Before running the application, make sure you have the following installed:
 
 ## Environment Variables
 
-Create a `.env` file in the root directory with the following variables:
+### Required Environment Variables
+
+Create a `.env` file in the root directory with the following required variables:
 
 ```env
+# Database connection string (required)
 DATABASE_URL=postgresql://user:password@localhost:5432/youtube_reader
+
+# Google Gemini API key for AI processing (required)
 GEMINI_API_KEY=your_gemini_api_key
+
+# YouTube Data API v3 key for video information (required)
 YOUTUBE_API_KEY=your_youtube_api_key
+```
+
+### Optional Environment Variables
+
+```env
+# Server port (default: 5000)
+PORT=5000
+
+# Development mode (default: development)
+NODE_ENV=development
+
+# Client URL for CORS (default: http://localhost:5173)
+CLIENT_URL=http://localhost:5173
+
+# Database connection pool settings
+DB_POOL_MAX=20
+DB_POOL_IDLE_TIMEOUT=10000
+
+# API rate limiting (requests per minute)
+RATE_LIMIT=100
+```
+
+### Environment Variable Details
+
+1. **DATABASE_URL**
+   - Format: `postgresql://<username>:<password>@<host>:<port>/<database>`
+   - Example: `postgresql://user:password@localhost:5432/youtube_reader`
+   - Note: Special characters in password must be URL-encoded
+
+2. **GEMINI_API_KEY**
+   - Obtain from [Google AI Studio](https://ai.google.dev/)
+   - Required for AI-powered transcript processing
+   - Rate limits apply based on your API quota
+
+3. **YOUTUBE_API_KEY**
+   - Obtain from Google Cloud Console (see YouTube API setup section)
+   - Required for fetching video information and transcripts
+   - Daily quota limits apply
+
+### Environment Validation
+
+The application validates environment variables on startup. Common issues:
+
+- Missing required variables will prevent startup
+- Invalid DATABASE_URL format will cause connection errors
+- Invalid API keys will result in 401/403 errors
+- Special characters in DATABASE_URL must be properly escaped
+
+### Development vs Production
+
+For production deployment:
+```env
+NODE_ENV=production
+CLIENT_URL=https://your-production-domain.com
+RATE_LIMIT=60
+```
+
+For development:
+```env
+NODE_ENV=development
+CLIENT_URL=http://localhost:5173
+RATE_LIMIT=100
 ```
 
 ### Setting up YouTube API Key
