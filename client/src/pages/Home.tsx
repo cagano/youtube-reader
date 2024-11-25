@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { ThemeSwitcher } from "@/components/ui/theme-switcher";
 import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
@@ -104,6 +105,9 @@ export default function Home() {
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-5xl">
+      <div className="flex justify-end mb-6">
+        <ThemeSwitcher />
+      </div>
       <div className="space-y-2 text-center mb-12">
         <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">
           YouTube Transcript Processor
