@@ -24,11 +24,20 @@ export default function TranscriptCard({
   const { toast } = useToast();
 
   const handleCopy = async (text: string) => {
-    await navigator.clipboard.writeText(text);
-    toast({
-      title: "Copied",
-      description: "Text copied to clipboard"
-    });
+    try {
+      await navigator.clipboard.writeText(text);
+      toast({
+        title: "Copied",
+        description: "Text copied to clipboard",
+        duration: 2000
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to copy text to clipboard",
+        variant: "destructive"
+      });
+    }
   };
 
   const contentClass = "transition-all duration-500 ease-in-out animate-in fade-in-0 slide-in-from-left-4";
@@ -57,11 +66,16 @@ export default function TranscriptCard({
             <Button
               variant="outline"
               size="sm"
-              className="absolute right-2 top-2"
-              onClick={() => handleCopy(original)}
+              className="absolute right-4 top-4 z-10 opacity-90 hover:opacity-100 transition-opacity"
+              onClick={async () => {
+                const button = document.activeElement as HTMLButtonElement;
+                button?.blur();
+                await handleCopy(original);
+              }}
             >
               <Copy className="w-4 h-4 mr-2" />
-              Copy
+              <span>Copy</span>
+              <span className="sr-only">Copy original text</span>
             </Button>
             <ScrollArea className="h-[600px] w-full rounded-lg border bg-muted/10 p-6">
               <div className={`prose prose-gray dark:prose-invert max-w-none ${contentClass}`}>
@@ -84,11 +98,16 @@ export default function TranscriptCard({
                 <Button
                   variant="outline"
                   size="sm"
-                  className="absolute right-2 top-2"
-                  onClick={() => handleCopy(formatted)}
+                  className="absolute right-4 top-4 z-10 opacity-90 hover:opacity-100 transition-opacity"
+                  onClick={async () => {
+                    const button = document.activeElement as HTMLButtonElement;
+                    button?.blur();
+                    await handleCopy(formatted);
+                  }}
                 >
                   <Copy className="w-4 h-4 mr-2" />
-                  Copy
+                  <span>Copy</span>
+                  <span className="sr-only">Copy formatted text</span>
                 </Button>
                 <ScrollArea className="h-[600px] w-full rounded-lg border bg-muted/10 p-6">
                   <div className={`prose prose-gray dark:prose-invert max-w-none ${contentClass}`}>
