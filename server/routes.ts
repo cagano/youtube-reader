@@ -93,7 +93,7 @@ export function registerRoutes(app: Express) {
       }
 
       console.log('Using prompt:', prompt);
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" }); // Change to gemini-pro
+      const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" }); // Change to gemini-pro
       console.log('Model initialized');
       
       const result = await model.generateContent(
