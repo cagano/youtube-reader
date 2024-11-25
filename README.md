@@ -31,7 +31,30 @@ Create a `.env` file in the root directory with the following variables:
 ```env
 DATABASE_URL=postgresql://user:password@localhost:5432/youtube_reader
 GEMINI_API_KEY=your_gemini_api_key
+YOUTUBE_API_KEY=your_youtube_api_key
 ```
+
+### Setting up YouTube API Key
+
+To obtain your YouTube API key:
+
+1. Create a Google Cloud Project:
+   - Go to the [Google Cloud Console](https://console.cloud.google.com/)
+   - Click on "Create Project" or select an existing project
+   - Give your project a name and click "Create"
+
+2. Enable the YouTube Data API v3:
+   - In the Google Cloud Console, navigate to "APIs & Services" > "Library"
+   - Search for "YouTube Data API v3"
+   - Click on the API and click "Enable"
+
+3. Create API Credentials:
+   - Go to "APIs & Services" > "Credentials"
+   - Click "Create Credentials" > "API Key"
+   - Copy the generated API key
+   - (Optional) Restrict the API key to only YouTube Data API v3 for security
+
+4. Add the API key to your `.env` file as `YOUTUBE_API_KEY`
 
 ## Installation
 
