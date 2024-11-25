@@ -85,22 +85,36 @@ export default function Home() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <h1 className="text-4xl font-bold mb-8 text-center">
-        YouTube Transcript Processor
-      </h1>
+    <div className="container mx-auto px-4 py-12 max-w-5xl">
+      <div className="space-y-2 text-center mb-12">
+        <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">
+          YouTube Transcript Processor
+        </h1>
+        <p className="text-muted-foreground">
+          Transform YouTube video transcripts with AI-powered processing
+        </p>
+      </div>
 
-      <Card className="p-6 mb-8">
-        <div className="flex gap-4">
-          <Input
-            placeholder="Enter YouTube URL"
-            value={videoUrl}
-            onChange={(e) => setVideoUrl(e.target.value)}
-            className="flex-1"
-          />
-          <Button onClick={handleFetchTranscript}>
-            Fetch Transcript
-          </Button>
+      <Card className="p-8 mb-12 shadow-lg">
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Input
+              placeholder="Enter YouTube video URL"
+              value={videoUrl}
+              onChange={(e) => setVideoUrl(e.target.value)}
+              className="flex-1"
+            />
+            <Button 
+              onClick={handleFetchTranscript}
+              size="lg"
+              className="w-full sm:w-auto"
+            >
+              Fetch Transcript
+            </Button>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Paste a YouTube URL to get started with transcript processing
+          </p>
         </div>
       </Card>
 

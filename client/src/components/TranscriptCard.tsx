@@ -28,12 +28,17 @@ export default function TranscriptCard({
   };
 
   return (
-    <Card className="p-6">
-      <Tabs defaultValue="original">
-        <TabsList className="mb-4">
-          <TabsTrigger value="original">Original</TabsTrigger>
-          <TabsTrigger value="formatted">Formatted</TabsTrigger>
-        </TabsList>
+    <Card className="p-8 shadow-lg">
+      <Tabs defaultValue="original" className="w-full">
+        <div className="flex items-center justify-between mb-6">
+          <TabsList>
+            <TabsTrigger value="original" className="text-base">Original</TabsTrigger>
+            <TabsTrigger value="formatted" className="text-base">Formatted</TabsTrigger>
+          </TabsList>
+          <p className="text-sm text-muted-foreground hidden sm:block">
+            Switch between original and processed versions
+          </p>
+        </div>
 
         <TabsContent value="original">
           <div className="relative">
@@ -46,8 +51,8 @@ export default function TranscriptCard({
               <Copy className="w-4 h-4 mr-2" />
               Copy
             </Button>
-            <ScrollArea className="h-[500px] w-full rounded-md border p-4">
-              <div className="prose max-w-none">
+            <ScrollArea className="h-[600px] w-full rounded-lg border bg-muted/10 p-6">
+              <div className="prose prose-gray dark:prose-invert max-w-none">
                 {original}
               </div>
             </ScrollArea>
@@ -73,8 +78,8 @@ export default function TranscriptCard({
                   <Copy className="w-4 h-4 mr-2" />
                   Copy
                 </Button>
-                <ScrollArea className="h-[500px] w-full rounded-md border p-4">
-                  <div className="prose max-w-none">
+                <ScrollArea className="h-[600px] w-full rounded-lg border bg-muted/10 p-6">
+                  <div className="prose prose-gray dark:prose-invert max-w-none">
                     {formatted}
                   </div>
                 </ScrollArea>
