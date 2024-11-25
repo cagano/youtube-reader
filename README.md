@@ -74,6 +74,59 @@ npm install
 npm run db:migrate
 ```
 
+## Docker Deployment
+
+1. Build the Docker image:
+```bash
+docker build -t youtube-reader .
+```
+
+2. Run the container:
+```bash
+docker run -d \
+  -p 5000:5000 \
+  -p 5173:5173 \
+  --env-file .env \
+  --name youtube-reader \
+  youtube-reader
+```
+
+Note: Make sure all environment variables are properly set in your .env file before building and running the container.
+
+### Docker Compose (Alternative)
+
+You can also use Docker Compose for easier deployment. Create a `docker-compose.yml` file:
+
+```yaml
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+      - "5173:5173"
+    env_file:
+      - .env
+    depends_on:
+      - db
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: youtube_reader
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+```
+
+Then run:
+```bash
+docker-compose up -d
+```
+
 ## Development
 
 To start the development server:
