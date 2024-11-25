@@ -22,31 +22,34 @@ const styles = StyleSheet.create({
   page: {
     flexDirection: 'column',
     backgroundColor: '#ffffff',
-    padding: 40,
+    padding: 30,
   },
   text: {
-    fontSize: 12,
+    fontSize: 10,
     fontFamily: 'Helvetica',
-    marginBottom: 12,
-    lineHeight: 1.5,
+    marginBottom: 8,
+    lineHeight: 1.4,
   },
   heading1: {
-    fontSize: 24,
-    fontFamily: 'Helvetica-Bold',
-    marginBottom: 16,
-    marginTop: 24,
-  },
-  heading2: {
-    fontSize: 20,
-    fontFamily: 'Helvetica-Bold',
-    marginBottom: 14,
-    marginTop: 20,
-  },
-  heading3: {
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: 'Helvetica-Bold',
     marginBottom: 12,
+    marginTop: 18,
+    lineHeight: 1.3,
+  },
+  heading2: {
+    fontSize: 16,
+    fontFamily: 'Helvetica-Bold',
+    marginBottom: 10,
     marginTop: 16,
+    lineHeight: 1.3,
+  },
+  heading3: {
+    fontSize: 14,
+    fontFamily: 'Helvetica-Bold',
+    marginBottom: 8,
+    marginTop: 12,
+    lineHeight: 1.3,
   },
   bold: {
     fontFamily: 'Helvetica-Bold',
@@ -56,12 +59,12 @@ const styles = StyleSheet.create({
   },
   listItem: {
     flexDirection: 'row',
-    marginBottom: 8,
-    paddingLeft: 16,
+    marginBottom: 6,
+    paddingLeft: 12,
   },
   listItemBullet: {
-    width: 16,
-    marginRight: 8,
+    width: 12,
+    marginRight: 6,
   },
   listItemContent: {
     flex: 1,
@@ -69,9 +72,11 @@ const styles = StyleSheet.create({
   codeBlock: {
     fontFamily: 'Courier',
     backgroundColor: '#f5f5f5',
-    padding: 8,
-    marginVertical: 8,
-    borderRadius: 4,
+    padding: 6,
+    marginVertical: 6,
+    borderRadius: 3,
+    fontSize: 9,
+    lineHeight: 1.3,
   },
 });
 
@@ -84,14 +89,14 @@ export function ExportButton({ content, fileName = 'transcript' }: ExportButtonP
       case 'pdf': {
         // Create PDF document
         // Custom components for markdown elements
-        const MarkdownH1 = ({ children }) => <Text style={styles.heading1}>{children}</Text>;
-        const MarkdownH2 = ({ children }) => <Text style={styles.heading2}>{children}</Text>;
-        const MarkdownH3 = ({ children }) => <Text style={styles.heading3}>{children}</Text>;
-        const MarkdownParagraph = ({ children }) => <Text style={styles.text}>{children}</Text>;
-        const MarkdownBold = ({ children }) => <Text style={styles.bold}>{children}</Text>;
-        const MarkdownItalic = ({ children }) => <Text style={styles.italic}>{children}</Text>;
-        const MarkdownCode = ({ children }) => <Text style={styles.codeBlock}>{children}</Text>;
-        const MarkdownListItem = ({ children }) => (
+        const MarkdownH1 = ({ children }: { children: React.ReactNode }) => <Text style={styles.heading1}>{children}</Text>;
+        const MarkdownH2 = ({ children }: { children: React.ReactNode }) => <Text style={styles.heading2}>{children}</Text>;
+        const MarkdownH3 = ({ children }: { children: React.ReactNode }) => <Text style={styles.heading3}>{children}</Text>;
+        const MarkdownParagraph = ({ children }: { children: React.ReactNode }) => <Text style={styles.text}>{children}</Text>;
+        const MarkdownBold = ({ children }: { children: React.ReactNode }) => <Text style={styles.bold}>{children}</Text>;
+        const MarkdownItalic = ({ children }: { children: React.ReactNode }) => <Text style={styles.italic}>{children}</Text>;
+        const MarkdownCode = ({ children }: { children: React.ReactNode }) => <Text style={styles.codeBlock}>{children}</Text>;
+        const MarkdownListItem = ({ children }: { children: React.ReactNode }) => (
           <View style={styles.listItem}>
             <Text style={styles.listItemBullet}>• </Text>
             <Text style={styles.listItemContent}>{children}</Text>
