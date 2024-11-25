@@ -79,7 +79,7 @@ const TranscriptView: React.FC<TranscriptViewProps> = ({
         <span className="sr-only">Toggle full screen</span>
       </Button>
     </div>
-    <ScrollArea className={`w-full rounded-lg border bg-muted/10 p-6 ${isFullScreen ? 'h-[90vh]' : 'h-[600px]'}`}>
+    <ScrollArea className={`w-full rounded-lg border bg-muted/10 p-6 ${isFullScreen ? 'h-[90vh]' : 'h-[600px]'} transition-all duration-300 ease-out`}>
       <div className="prose prose-gray dark:prose-invert max-w-none" style={{ fontSize: `${fontSize}px` }}>
         <ReactMarkdown className="whitespace-pre-wrap break-words">
           {content}
@@ -129,9 +129,14 @@ export default function TranscriptCard({
     }
   };
 
-  const contentClass = "transition-all duration-500 ease-in-out animate-in fade-in-0 slide-in-from-left-4";
-  const loadingClass = "animate-pulse transition-all duration-500 ease-in-out";
-  const tabContentClass = "animate-in fade-in-0 data-[state=inactive]:animate-out data-[state=inactive]:fade-out-0 data-[state=active]:slide-in-from-right-1";
+  const contentClass = "transition-all duration-300 ease-out animate-in fade-in-0 slide-in-from-left-4";
+  const loadingClass = "animate-pulse transition-all duration-300 ease-out";
+  const tabContentClass = [
+    "animate-in fade-in-0 zoom-in-95",
+    "data-[state=inactive]:animate-out data-[state=inactive]:fade-out-0 data-[state=inactive]:zoom-out-95",
+    "data-[state=active]:slide-in-from-right-1",
+    "transition-all duration-300 ease-out"
+  ].join(" ");
 
   return (
     <Card className="p-8 shadow-lg w-full max-w-none">
