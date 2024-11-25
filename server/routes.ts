@@ -134,43 +134,33 @@ export function registerRoutes(app: Express) {
       }
 
       console.log('Using prompt:', prompt);
-async function suggestTemplates(transcript: string) {
-  const templates = await db.select().from(formatTemplates);
-  // Use Gemini to analyze transcript and suggest relevant templates
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
-  const prompt = `Analyze this transcript and suggest which of the following templates would be most relevant. Return only the IDs of the most relevant templates in order of relevance. Available templates:
-
-${templates.map(t => `ID ${t.id}: ${t.name} - ${t.description}`).join('\n')}
-
-Transcript:
-${transcript.slice(0, 1000)}...`;
-  
-  const result = await model.generateContent(prompt);
-  const suggestedIds = result.response.text()
-    .match(/\d+/g)
-    ?.map(Number)
-    .filter(id => templates.some(t => t.id === id)) || [];
-    
-  return templates
-    .filter(t => suggestedIds.includes(t.id))
-    .map(t => ({ ...t, score: suggestedIds.indexOf(t.id) + 1 }));
-}
+      
   // Default templates for initial setup
   const defaultTemplates = [
     {
       name: "Summary",
       description: "Create a concise summary of the content",
-      prompt: "Summarize the following transcript in a clear and concise way:"
+      prompt: "Create a clear and concise summary of the following transcript, highlighting the main themes and key takeaways. Format the output with proper paragraphs and bullet points where appropriate:"
     },
     {
       name: "Key Points",
       description: "Extract main points and insights",
-      prompt: "Extract the key points and important insights from this transcript:"
+      prompt: "Extract and organize the key points and important insights from this transcript. Format the output as follows:\n\n1. Main Themes:\n[List key themes]\n\n2. Key Points:\n[Bullet points]\n\n3. Important Insights:\n[Numbered insights]"
     },
     {
       name: "Q&A Format",
       description: "Convert content into Q&A format",
-      prompt: "Convert this transcript into a Q&A format, identifying questions and their answers:"
+      prompt: "Convert this transcript into a structured Q&A format. Each question should be clearly formatted with 'Q:' prefix and each answer with 'A:' prefix. Group related Q&As together under relevant section headings:"
+    },
+    {
+      name: "Study Notes",
+      description: "Create structured study notes",
+      prompt: "Transform this transcript into comprehensive study notes with the following structure:\n\n1. Overview\n2. Main Concepts\n3. Detailed Notes (with subheadings)\n4. Key Terms & Definitions\n5. Summary Points"
+    },
+    {
+      name: "Executive Brief",
+      description: "Create a professional executive summary",
+      prompt: "Create a professional executive brief from this transcript with the following sections:\n\n1. Executive Summary\n2. Key Findings\n3. Recommendations\n4. Action Items\n\nKeep it concise and business-focused."
     }
   ];
 
