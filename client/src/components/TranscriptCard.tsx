@@ -45,13 +45,27 @@ const TranscriptView: React.FC<TranscriptViewProps> = ({
   
   const contentHeight = useMemo(() => {
     if (isFullScreen) {
-      // In fullscreen, use 90% of viewport height minus header space
       return `calc(${viewportHeight * 0.9}px - 8rem)`;
     }
-    // In normal mode, use responsive height based on viewport
-    const baseHeight = Math.min(Math.max(viewportHeight * 0.6, 400), 800);
-    return `${baseHeight}px`;
+    return `calc(${Math.min(Math.max(viewportHeight * 0.6, 400), 800)}px)`;
   }, [viewportHeight, isFullScreen]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey || e.metaKey) {
+        if (e.key === '=' || e.key === '+') {
+          e.preventDefault();
+          handleFontSizeChange(fontSize + 1);
+        } else if (e.key === '-') {
+          e.preventDefault();
+          handleFontSizeChange(fontSize - 1);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [fontSize]);
 
   return (
     <div className="relative">
@@ -104,17 +118,35 @@ export default function TranscriptCard({
   const handleCopy = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
+      const button = document.activeElement as HTMLButtonElement;
+      button?.blur();
       toast({
-        title: "Copied",
+        title: "Success",
         description: "Text copied to clipboard",
         duration: 2000
       });
+      return true;
     } catch (error) {
+      console.error('Copy failed:', error);
       toast({
         title: "Error",
-        description: "Failed to copy text to clipboard",
-        variant: "destructive"
+        description: "Failed to copy text. Please try again or copy manually.",
+        variant: "destructive",
+        duration: 3000
       });
+      return false;
+    }
+  };
+
+  const handleCopyWithFeedback = async (text: string) => {
+    const success = await handleCopy(text);
+    if (success) {
+      // Visual feedback animation
+      const copyButton = document.querySelector('[data-copy-button]');
+      if (copyButton) {
+        copyButton.classList.add('copy-success');
+        setTimeout(() => copyButton.classList.remove('copy-success'), 1000);
+      }
     }
   };
 
