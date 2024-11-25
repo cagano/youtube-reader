@@ -151,20 +151,22 @@ export default function Home() {
                     onClick={handleFetchTranscript}
                     size="lg"
                     className="w-full sm:w-auto transition-all duration-300 ease-in-out"
-                    disabled={!videoUrl.trim() || transcript !== undefined}
+                    disabled={!videoUrl.trim() || processMutation.isPending}
                   >
                     <span className="flex items-center gap-2">
                       {transcriptError ? (
                         "Try Again"
                       ) : !videoUrl.trim() ? (
                         "Enter URL First"
-                      ) : (
+                      ) : processMutation.isPending ? (
                         <>
-                          {refetchTranscript.isFetching && (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          )}
-                          {transcript === undefined ? "Fetch Transcript" : "Processing..."}
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Processing...
                         </>
+                      ) : transcript ? (
+                        "Transcript Ready"
+                      ) : (
+                        "Fetch Transcript"
                       )}
                     </span>
                   </Button>
