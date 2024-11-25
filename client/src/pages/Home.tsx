@@ -154,29 +154,16 @@ export default function Home() {
                     disabled={!videoUrl.trim() || transcript !== undefined}
                   >
                     <span className="flex items-center gap-2">
-                      {transcript === undefined ? (
-                        <>
-                          {transcriptError ? (
-                            "Try Again"
-                          ) : (
-                            <>
-                              {!videoUrl.trim() ? (
-                                "Enter URL First"
-                              ) : (
-                                <>
-                                  {processMutation.isPending && (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                  )}
-                                  Fetch Transcript
-                                </>
-                              )}
-                            </>
-                          )}
-                        </>
+                      {transcriptError ? (
+                        "Try Again"
+                      ) : !videoUrl.trim() ? (
+                        "Enter URL First"
                       ) : (
                         <>
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          Processing...
+                          {refetchTranscript.isFetching && (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          )}
+                          {transcript === undefined ? "Fetch Transcript" : "Processing..."}
                         </>
                       )}
                     </span>
