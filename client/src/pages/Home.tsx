@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { ThemeSwitcher } from "@/components/ui/theme-switcher";
 import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -87,19 +87,32 @@ export default function Home() {
     setActiveTab(tab);
   }, []);
 
-  const handleProcessTranscript = () => {
+  // Process transcript automatically when template is selected or custom prompt changes
+  useEffect(() => {
     if (!transcript) return;
     
-    processMutation.mutate({
-      transcript,
-      templateId: selectedTemplateId || undefined,
-      customPrompt: !selectedTemplateId ? customPrompt : undefined
-    });
-  };
+    // If template is selected, process immediately
+    if (selectedTemplateId) {
+      processMutation.mutate({
+        transcript,
+        templateId: selectedTemplateId
+      });
+    }
+    // If custom prompt is provided and no template is selected, process with delay
+    else if (customPrompt.trim()) {
+      const timer = setTimeout(() => {
+        processMutation.mutate({
+          transcript,
+          customPrompt
+        });
+      }, 1000); // Debounce custom prompt processing
+      
+      return () => clearTimeout(timer);
+    }
+  }, [transcript, selectedTemplateId, customPrompt]);
 
   useKeyboardShortcuts({
     onFetchTranscript: handleFetchTranscript,
-    onProcessTranscript: handleProcessTranscript,
     onSwitchTab: handleSwitchTab,
   });
 
@@ -169,22 +182,7 @@ export default function Home() {
               )}
             </div>
             
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    onClick={handleProcessTranscript}
-                    disabled={processMutation.isPending}
-                    className="w-full"
-                  >
-                    Process Transcript
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Press Ctrl/Cmd + P</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            
           </div>
 
           <TranscriptCard
