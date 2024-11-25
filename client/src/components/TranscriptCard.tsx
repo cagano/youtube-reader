@@ -152,6 +152,18 @@ export default function TranscriptCard({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Automatically enter full-screen mode when formatted content becomes available
+  useEffect(() => {
+    if (formatted && !isLoading && activeTab === 'formatted') {
+      setIsFullScreen(true);
+      toast({
+        title: "Full Screen Mode",
+        description: "Press Alt + F or use the button to exit full screen",
+        duration: 3000
+      });
+    }
+  }, [formatted, isLoading, activeTab]);
+
   const handleCopy = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
