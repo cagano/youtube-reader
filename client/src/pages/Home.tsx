@@ -150,27 +150,25 @@ export default function Home() {
                   <Button 
                     onClick={handleFetchTranscript}
                     size="lg"
-                    className={`w-full sm:w-auto transition-all duration-300 ease-in-out ${
-                      transcript === undefined && videoUrl.trim() 
-                        ? 'animate-pulse hover:animate-none' 
-                        : ''
-                    }`}
+                    className="w-full sm:w-auto transition-all duration-300 ease-in-out"
                     disabled={!videoUrl.trim() || transcript !== undefined}
                   >
-                    <span className="flex items-center gap-2 transition-opacity duration-200">
+                    <span className="flex items-center gap-2">
                       {transcript === undefined ? (
                         <>
                           {transcriptError ? (
                             "Try Again"
                           ) : (
                             <>
-                              {videoUrl.trim() ? (
+                              {!videoUrl.trim() ? (
+                                "Enter URL First"
+                              ) : (
                                 <>
-                                  <Loader2 className="h-4 w-4 animate-spin opacity-0 group-hover:opacity-100" />
+                                  {processMutation.isPending && (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                  )}
                                   Fetch Transcript
                                 </>
-                              ) : (
-                                "Enter URL First"
                               )}
                             </>
                           )}
