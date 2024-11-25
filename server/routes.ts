@@ -35,24 +35,12 @@ function chunkText(text: string, chunkSize: number = 30000): string[] {
 
 function cleanFormattedText(text: string): string {
   return text
-    // Preserve markdown headers and lists
-    .replace(/^(#{1,6}\s.*$)/gm, (match) => `\n${match.trim()}\n`)
-    .replace(/^([*-]\s.*$)/gm, (match) => match.trim())
-    // Handle paragraph spacing (max 2 newlines)
-    .replace(/\n{3,}/g, '\n\n')
-    // Clean up spaces around punctuation
-    .replace(/\s+([.,!?:;])/g, '$1')
-    .replace(/([.,!?:;])\s+/g, '$1 ')
-    // Handle multiple spaces and tabs
-    .replace(/[ \t]+/g, ' ')
-    // Clean up spaces around newlines
-    .replace(/\n +/g, '\n')
-    .replace(/ +\n/g, '\n')
-    // Handle spacing in markdown lists and code blocks
-    .replace(/^(\s*[*-]\s)/gm, '\n$1')
-    .replace(/^(\s*```)/gm, '\n$1')
-    // Final cleanup
-    .replace(/^\s+|\s+$/gm, '')     // Remove leading/trailing spaces
+    .replace(/\n{3,}/g, '\n\n')     // Replace 3+ newlines with 2
+    .replace(/\s+$/gm, '')          // Remove trailing spaces
+    .replace(/^\s+/gm, '')          // Remove leading spaces
+    .replace(/[ \t]+/g, ' ')        // Replace multiple spaces/tabs with single space
+    .replace(/\n +/g, '\n')         // Remove spaces after newlines
+    .replace(/ +\n/g, '\n')         // Remove spaces before newlines
     .replace(/^\n+|\n+$/g, '')      // Remove leading/trailing newlines
     .trim();
 }
@@ -204,14 +192,6 @@ export function registerRoutes(app: Express) {
       for (const chunk of chunks) {
         const result = await model.generateContent(
           `${prompt}
-
-Please follow these formatting guidelines:
-- Use minimal spacing between sections (single line break)
-- Avoid unnecessary line breaks
-- Use consistent markdown formatting
-- Keep paragraphs compact while maintaining readability
-- Use proper markdown headers (##) for sections
-- Ensure clean spacing around punctuation
 
 Transcript chunk:
 ${chunk}`
