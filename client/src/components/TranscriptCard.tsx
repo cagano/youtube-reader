@@ -274,7 +274,7 @@ export default function TranscriptCard({
       </Tabs>
 
       <Dialog open={isFullScreen} onOpenChange={setIsFullScreen}>
-        <DialogContent className="max-w-[95vw] w-full h-[95vh] p-4 overflow-hidden">
+        <DialogContent className="max-w-[95vw] w-full h-[95vh] p-6 overflow-hidden flex flex-col">
           <DialogTitle className="sr-only">Full Screen Transcript View</DialogTitle>
           <DialogDescription className="sr-only">
             Full screen view of the transcript with enhanced readability
@@ -284,11 +284,91 @@ export default function TranscriptCard({
             onValueChange={(value) => onSwitchTab?.(value as 'original' | 'formatted')}
             className="w-full h-full flex flex-col overflow-hidden"
           >
-            <div className="flex items-center justify-between mb-6">
-              <TabsList>
-                <TabsTrigger value="original" className="text-base">Original</TabsTrigger>
-                <TabsTrigger value="formatted" className="text-base">Formatted</TabsTrigger>
-              </TabsList>
+            <div className="flex items-center justify-between mb-6 gap-4">
+              <div className="flex items-center gap-4">
+                <TabsList>
+                  <TabsTrigger value="original" className="text-base">Original</TabsTrigger>
+                  <TabsTrigger value="formatted" className="text-base">Formatted</TabsTrigger>
+                </TabsList>
+                <div className="flex items-center gap-2">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="opacity-90 hover:opacity-100 hover:scale-105 transition-all duration-200"
+                          onClick={() => handleFontSizeChange(fontSize - 1)}
+                          disabled={fontSize <= 12}
+                        >
+                          <span className="font-bold">A-</span>
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Decrease font size</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  
+                  <span className="text-sm font-medium text-muted-foreground">{fontSize}px</span>
+                  
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="opacity-90 hover:opacity-100 hover:scale-105 transition-all duration-200"
+                          onClick={() => handleFontSizeChange(fontSize + 1)}
+                          disabled={fontSize >= 24}
+                        >
+                          <span className="font-bold">A+</span>
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Increase font size</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="opacity-90 hover:opacity-100 hover:scale-105 transition-all duration-200"
+                        onClick={handleCopyClick}
+                      >
+                        <Copy className="w-4 h-4 mr-2" />
+                        <span className="hidden sm:inline">Copy</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Copy text to clipboard</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="opacity-90 hover:opacity-100 hover:scale-105 transition-all duration-200"
+                        onClick={() => setIsFullScreen(false)}
+                      >
+                        <Minimize2 className="w-4 h-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Exit full screen (Alt + F)</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
             </div>
 
             <TabsContent value="original" className={`${tabContentClass} flex-grow`}>
