@@ -119,10 +119,10 @@ export default function Home() {
       </Card>
 
       {transcript && (
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="animate-in fade-in-0 slide-in-from-bottom-8 duration-700 ease-in-out">
           <VideoMetadata videoUrl={videoUrl} />
           
-          <div className="grid gap-6 mb-8 transition-all duration-300">
+          <div className="grid gap-6 mb-8 transition-all duration-500 animate-in fade-in-0 slide-in-from-bottom-4 ease-in-out">
             <FormatTemplateSelect
               value={selectedTemplateId}
               onChange={setSelectedTemplateId}

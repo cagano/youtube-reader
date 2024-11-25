@@ -27,8 +27,9 @@ export default function TranscriptCard({
     });
   };
 
-  const contentClass = "transition-opacity duration-300 ease-in-out";
-  const loadingClass = "animate-pulse transition-all duration-300 ease-in-out";
+  const contentClass = "transition-all duration-500 ease-in-out animate-in fade-in-0 slide-in-from-left-4";
+  const loadingClass = "animate-pulse transition-all duration-500 ease-in-out";
+  const tabContentClass = "animate-in fade-in-0 data-[state=inactive]:animate-out data-[state=inactive]:fade-out-0 data-[state=active]:slide-in-from-right-1";
 
   return (
     <Card className="p-8 shadow-lg">
@@ -43,8 +44,8 @@ export default function TranscriptCard({
           </p>
         </div>
 
-        <TabsContent value="original">
-          <div className="relative">
+        <TabsContent value="original" className={tabContentClass}>
+          <div className="relative animate-in fade-in-0 slide-in-from-left-1">
             <Button
               variant="outline"
               size="sm"
@@ -62,8 +63,8 @@ export default function TranscriptCard({
           </div>
         </TabsContent>
 
-        <TabsContent value="formatted">
-          <div className="relative">
+        <TabsContent value="formatted" className={tabContentClass}>
+          <div className="relative animate-in fade-in-0 slide-in-from-right-1">
             {isLoading ? (
               <div className={`space-y-4 ${loadingClass}`}>
                 <Skeleton className="h-4 w-full" />
