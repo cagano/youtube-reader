@@ -31,6 +31,13 @@ function chunkText(text: string, chunkSize: number = 30000): string[] {
     chunks.push(text.slice(i, i + chunkSize));
   }
   return chunks;
+function cleanFormattedText(text: string): string {
+  return text
+    .replace(/\n{3,}/g, '\n\n')  // Replace 3+ newlines with 2
+    .replace(/\s+$/gm, '')       // Remove trailing spaces
+    .replace(/^\s+/gm, '')       // Remove leading spaces
+    .trim();
+}
 }
 async function suggestTemplates(transcript: string) {
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
@@ -189,8 +196,8 @@ ${chunk}`
       }
 
       // Combine results
-      const formattedText = results.join("\n\n");
-      console.log('All chunks combined');
+      const formattedText = cleanFormattedText(results.join("\n"));
+      console.log('All chunks combined and cleaned');
 
       res.json({ formattedTranscript: formattedText });
     } catch (error) {
