@@ -27,6 +27,9 @@ export default function TranscriptCard({
     });
   };
 
+  const contentClass = "transition-opacity duration-300 ease-in-out";
+  const loadingClass = "animate-pulse transition-all duration-300 ease-in-out";
+
   return (
     <Card className="p-8 shadow-lg">
       <Tabs defaultValue="original" className="w-full">
@@ -52,7 +55,7 @@ export default function TranscriptCard({
               Copy
             </Button>
             <ScrollArea className="h-[600px] w-full rounded-lg border bg-muted/10 p-6">
-              <div className="prose prose-gray dark:prose-invert max-w-none">
+              <div className={`prose prose-gray dark:prose-invert max-w-none ${contentClass}`}>
                 {original}
               </div>
             </ScrollArea>
@@ -62,7 +65,7 @@ export default function TranscriptCard({
         <TabsContent value="formatted">
           <div className="relative">
             {isLoading ? (
-              <div className="space-y-4">
+              <div className={`space-y-4 ${loadingClass}`}>
                 <Skeleton className="h-4 w-full" />
                 <Skeleton className="h-4 w-[90%]" />
                 <Skeleton className="h-4 w-[95%]" />
@@ -79,7 +82,7 @@ export default function TranscriptCard({
                   Copy
                 </Button>
                 <ScrollArea className="h-[600px] w-full rounded-lg border bg-muted/10 p-6">
-                  <div className="prose prose-gray dark:prose-invert max-w-none">
+                  <div className={`prose prose-gray dark:prose-invert max-w-none ${contentClass}`}>
                     {formatted}
                   </div>
                 </ScrollArea>

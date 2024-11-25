@@ -119,10 +119,10 @@ export default function Home() {
       </Card>
 
       {transcript && (
-        <>
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
           <VideoMetadata videoUrl={videoUrl} />
           
-          <div className="grid gap-6 mb-8">
+          <div className="grid gap-6 mb-8 transition-all duration-300">
             <FormatTemplateSelect
               value={selectedTemplateId}
               onChange={setSelectedTemplateId}
@@ -148,7 +148,7 @@ export default function Home() {
             formatted={processMutation.data?.formattedTranscript}
             isLoading={processMutation.isPending}
           />
-        </>
+        </div>
       )}
     </div>
   );
