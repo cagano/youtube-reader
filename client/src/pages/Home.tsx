@@ -216,6 +216,7 @@ const [isCustomTemplateSelected, setIsCustomTemplateSelected] = useState(false);
             isLoading={processMutation.isPending}
             activeTab={activeTab}
             onSwitchTab={handleSwitchTab}
+            videoTitle={getVideoId(videoUrl) || undefined}
           />
         </div>
       )}

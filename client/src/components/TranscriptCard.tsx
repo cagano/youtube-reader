@@ -1,7 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
 import { useViewportSize } from "@/hooks/use-viewport-size";
 import ReactMarkdown from "react-markdown";
-import { Copy, Maximize2, Minimize2 } from "lucide-react";
+import { Copy, Maximize2, Minimize2, Download, FileDown } from "lucide-react";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { jsPDF } from "jspdf";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
@@ -22,7 +24,10 @@ interface TranscriptCardProps {
   isLoading: boolean;
   activeTab?: 'original' | 'formatted';
   onSwitchTab?: (tab: 'original' | 'formatted') => void;
+  videoTitle?: string;
 }
+
+type ExportFormat = 'pdf' | 'markdown' | 'text';
 
 interface TranscriptViewProps {
   content: string;
@@ -55,10 +60,10 @@ const TranscriptView: React.FC<TranscriptViewProps> = ({
       if (e.ctrlKey || e.metaKey) {
         if (e.key === '=' || e.key === '+') {
           e.preventDefault();
-          handleFontSizeChange(fontSize + 1);
+          onFontSizeChange(fontSize + 1);
         } else if (e.key === '-') {
           e.preventDefault();
-          handleFontSizeChange(fontSize - 1);
+          onFontSizeChange(fontSize - 1);
         }
       }
     };
@@ -71,12 +76,12 @@ const TranscriptView: React.FC<TranscriptViewProps> = ({
     <div className="relative">
       <ScrollArea className={`w-full rounded-lg border bg-muted/10 p-6 transition-all duration-300 ease-out`} style={{ height: contentHeight }}>
         <div className="prose prose-gray dark:prose-invert max-w-none" style={{ fontSize: `${fontSize}px` }}>
-        <ReactMarkdown className="whitespace-pre-wrap break-words">
-          {content}
-        </ReactMarkdown>
-      </div>
-    </ScrollArea>
-  </div>
+          <ReactMarkdown className="whitespace-pre-wrap break-words">
+            {content}
+          </ReactMarkdown>
+        </div>
+      </ScrollArea>
+    </div>
   );
 };
 
@@ -135,6 +140,90 @@ export default function TranscriptCard({
         duration: 3000
       });
       return false;
+    }
+  };
+
+  type ExportFormat = 'pdf' | 'markdown' | 'text';
+
+  const handleExport = async (format: ExportFormat) => {
+    const text = activeTab === 'original' ? original : formatted;
+    if (!text) return;
+
+    const timestamp = new Date().toISOString().split('T')[0];
+    const title = videoTitle || 'transcript';
+    const sanitizedTitle = title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+
+    try {
+      switch (format) {
+        case 'pdf': {
+          const doc = new jsPDF();
+          
+          // Add title
+          doc.setFontSize(16);
+          doc.text(title, 20, 20);
+          
+          // Add metadata
+          doc.setFontSize(12);
+          doc.text(`Exported on: ${timestamp}`, 20, 30);
+          
+          // Add content with word wrap
+          doc.setFontSize(12);
+          const textLines = doc.splitTextToSize(text, 170);
+          doc.text(textLines, 20, 40);
+          
+          // Save PDF
+          doc.save(`${sanitizedTitle}_${timestamp}.pdf`);
+          break;
+        }
+        case 'markdown': {
+          const mdContent = `---
+title: ${title}
+date: ${timestamp}
+---
+
+${text}`;
+          const blob = new Blob([mdContent], { type: 'text/markdown' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${sanitizedTitle}_${timestamp}.md`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          break;
+        }
+        case 'text': {
+          const txtContent = `Title: ${title}
+Date: ${timestamp}
+
+${text}`;
+          const blob = new Blob([txtContent], { type: 'text/plain' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${sanitizedTitle}_${timestamp}.txt`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          break;
+        }
+      }
+      
+      toast({
+        title: "Success",
+        description: `Exported transcript as ${format.toUpperCase()}`,
+        duration: 2000
+      });
+    } catch (error) {
+      console.error('Export error:', error);
+      toast({
+        title: "Error",
+        description: `Failed to export as ${format.toUpperCase()}`,
+        variant: "destructive",
+        duration: 3000
+      });
     }
   };
 
@@ -235,24 +324,71 @@ export default function TranscriptCard({
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="opacity-90 hover:opacity-100 hover:scale-105 transition-all duration-200"
-                    onClick={handleCopyClick}
-                  >
-                    <Copy className="w-4 h-4 mr-2" />
-                    <span className="hidden sm:inline">Copy</span>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Copy text to clipboard</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <div className="flex items-center gap-2">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="opacity-90 hover:opacity-100 hover:scale-105 transition-all duration-200"
+                      onClick={handleCopyClick}
+                    >
+                      <Copy className="w-4 h-4 mr-2" />
+                      <span className="hidden sm:inline">Copy</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Copy text to clipboard</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <DropdownMenu.Root>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <DropdownMenu.Trigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="opacity-90 hover:opacity-100 hover:scale-105 transition-all duration-200"
+                        >
+                          <FileDown className="w-4 h-4 mr-2" />
+                          <span className="hidden sm:inline">Export</span>
+                        </Button>
+                      </DropdownMenu.Trigger>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Export transcript</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+
+                <DropdownMenu.Portal>
+                  <DropdownMenu.Content className="min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md">
+                    <DropdownMenu.Item
+                      className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+                      onClick={() => handleExport('pdf')}
+                    >
+                      Export as PDF
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item
+                      className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+                      onClick={() => handleExport('markdown')}
+                    >
+                      Export as Markdown
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item
+                      className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+                      onClick={() => handleExport('text')}
+                    >
+                      Export as Text
+                    </DropdownMenu.Item>
+                  </DropdownMenu.Content>
+                </DropdownMenu.Portal>
+              </DropdownMenu.Root>
+            </div>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
