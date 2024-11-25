@@ -22,16 +22,43 @@ interface TranscriptViewProps {
   isFullScreen?: boolean;
   onCopy: () => Promise<void>;
   onToggleFullScreen?: () => void;
+  fontSize: number;
+  onFontSizeChange: (size: number) => void;
 }
 
 const TranscriptView: React.FC<TranscriptViewProps> = ({
   content,
   isFullScreen,
   onCopy,
-  onToggleFullScreen
+  onToggleFullScreen,
+  fontSize,
+  onFontSizeChange
 }) => (
   <div className="relative">
     <div className="absolute right-4 top-4 z-10 flex gap-2">
+      <div className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          className="opacity-90 hover:opacity-100 transition-opacity"
+          onClick={() => onFontSizeChange(fontSize - 1)}
+          disabled={fontSize <= 12}
+        >
+          <span className="font-bold">A-</span>
+          <span className="sr-only">Decrease font size</span>
+        </Button>
+        <span className="text-sm font-medium text-muted-foreground">{fontSize}px</span>
+        <Button
+          variant="outline"
+          size="sm"
+          className="opacity-90 hover:opacity-100 transition-opacity"
+          onClick={() => onFontSizeChange(fontSize + 1)}
+          disabled={fontSize >= 24}
+        >
+          <span className="font-bold">A+</span>
+          <span className="sr-only">Increase font size</span>
+        </Button>
+      </div>
       <Button
         variant="outline"
         size="sm"
@@ -53,7 +80,7 @@ const TranscriptView: React.FC<TranscriptViewProps> = ({
       </Button>
     </div>
     <ScrollArea className={`w-full rounded-lg border bg-muted/10 p-6 ${isFullScreen ? 'h-[90vh]' : 'h-[600px]'}`}>
-      <div className="prose prose-gray dark:prose-invert max-w-none">
+      <div className="prose prose-gray dark:prose-invert max-w-none" style={{ fontSize: `${fontSize}px` }}>
         <ReactMarkdown className="whitespace-pre-wrap break-words">
           {content}
         </ReactMarkdown>
@@ -70,6 +97,7 @@ export default function TranscriptCard({
   onSwitchTab,
 }: TranscriptCardProps) {
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [fontSize, setFontSize] = useState(16);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -155,6 +183,8 @@ export default function TranscriptCard({
                   await handleCopy(formatted);
                 }}
                 onToggleFullScreen={() => setIsFullScreen(prev => !prev)}
+                fontSize={fontSize}
+                onFontSizeChange={setFontSize}
               />
             ) : (
               <p className="text-muted-foreground text-center py-8">
@@ -189,6 +219,8 @@ export default function TranscriptCard({
                   await handleCopy(original);
                 }}
                 onToggleFullScreen={() => setIsFullScreen(false)}
+                fontSize={fontSize}
+                onFontSizeChange={setFontSize}
               />
             </TabsContent>
 
@@ -209,6 +241,8 @@ export default function TranscriptCard({
                     await handleCopy(formatted);
                   }}
                   onToggleFullScreen={() => setIsFullScreen(false)}
+                  fontSize={fontSize}
+                  onFontSizeChange={setFontSize}
                 />
               ) : (
                 <p className="text-muted-foreground text-center py-8">
