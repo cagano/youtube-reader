@@ -134,7 +134,7 @@ export default function TranscriptCard({
   const tabContentClass = "animate-in fade-in-0 data-[state=inactive]:animate-out data-[state=inactive]:fade-out-0 data-[state=active]:slide-in-from-right-1";
 
   return (
-    <Card className="p-8 shadow-lg">
+    <Card className="p-8 shadow-lg w-full max-w-none">
       <Tabs 
         value={activeTab}
         onValueChange={(value) => onSwitchTab?.(value as 'original' | 'formatted')}

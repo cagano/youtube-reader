@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { ThemeSwitcher } from "@/components/ui/theme-switcher";
 import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
+import { Loader2 } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -97,6 +98,8 @@ export default function Home() {
         transcript,
         templateId: selectedTemplateId
       });
+      // Switch to formatted tab when processing starts
+      setActiveTab('formatted');
     }
     // If custom prompt is provided and no template is selected, process with delay
     else if (customPrompt.trim()) {
@@ -105,6 +108,8 @@ export default function Home() {
           transcript,
           customPrompt
         });
+        // Switch to formatted tab when processing starts
+        setActiveTab('formatted');
       }, 1000); // Debounce custom prompt processing
       
       return () => clearTimeout(timer);
@@ -146,8 +151,24 @@ export default function Home() {
                     onClick={handleFetchTranscript}
                     size="lg"
                     className="w-full sm:w-auto"
+                    disabled={!videoUrl.trim() || transcript !== undefined}
                   >
-                    Fetch Transcript
+                    {transcript === undefined ? (
+                      <>
+                        {transcriptError ? (
+                          "Try Again"
+                        ) : (
+                          <>
+                            {videoUrl.trim() ? "Fetch Transcript" : "Enter URL First"}
+                          </>
+                        )}
+                      </>
+                    ) : (
+                      <span className="flex items-center gap-2">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Loading...
+                      </span>
+                    )}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
