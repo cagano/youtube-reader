@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 interface FormatTemplateSelectProps {
   value: number | null;
   onChange: (value: number | null) => void;
+  transcript?: string;
 }
 
 interface Template {

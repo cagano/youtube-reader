@@ -134,6 +134,27 @@ export function registerRoutes(app: Express) {
       }
 
       console.log('Using prompt:', prompt);
+async function suggestTemplates(transcript: string) {
+  const templates = await db.select().from(formatTemplates);
+  // Use Gemini to analyze transcript and suggest relevant templates
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+  const prompt = `Analyze this transcript and suggest which of the following templates would be most relevant. Return only the IDs of the most relevant templates in order of relevance. Available templates:
+
+${templates.map(t => `ID ${t.id}: ${t.name} - ${t.description}`).join('\n')}
+
+Transcript:
+${transcript.slice(0, 1000)}...`;
+  
+  const result = await model.generateContent(prompt);
+  const suggestedIds = result.response.text()
+    .match(/\d+/g)
+    ?.map(Number)
+    .filter(id => templates.some(t => t.id === id)) || [];
+    
+  return templates
+    .filter(t => suggestedIds.includes(t.id))
+    .map(t => ({ ...t, score: suggestedIds.indexOf(t.id) + 1 }));
+}
   // Default templates for initial setup
   const defaultTemplates = [
     {
