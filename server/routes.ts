@@ -83,7 +83,7 @@ export function registerRoutes(app: Express) {
         prompt = customPrompt;
       }
 
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+      const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
       const result = await model.generateContent(
         `${prompt}\n\nTranscript:\n${transcript}`
       );
