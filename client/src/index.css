@@ -22,7 +22,7 @@
   }
 
   * {
-    @apply border-border transition-colors duration-300;
+    @apply border-border transition-all duration-300 ease-in-out;
   }
 
   body {
