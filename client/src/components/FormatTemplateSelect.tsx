@@ -1,4 +1,6 @@
+import React from 'react';
 import { useQuery } from "@tanstack/react-query";
+import { getSuggestedTemplates } from '../lib/api';
 import {
   Select,
   SelectContent,
