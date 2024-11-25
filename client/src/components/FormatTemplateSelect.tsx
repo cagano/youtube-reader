@@ -121,6 +121,23 @@ export default function FormatTemplateSelect({
             </Tooltip>
           </TooltipProvider>
         ))}
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant={value === null ? "default" : "outline"}
+                className="w-full text-left flex items-center gap-3 py-4 px-5 hover:scale-[1.02] hover:shadow-md transition-all duration-200 ease-in-out"
+                onClick={() => onChange(null)}
+              >
+                <Target className="w-5 h-5 flex-shrink-0" />
+                <div className="font-medium truncate">Custom Template</div>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" className="max-w-[300px]">
+              <p>Create your own custom formatting instructions</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </div>
   );
