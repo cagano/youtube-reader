@@ -68,7 +68,7 @@ export default function Home() {
     } catch (error) {
       toast({
         title: "Error",
-        description: error.message || "Failed to fetch transcript",
+        description: error instanceof Error ? error.message : "Failed to fetch transcript",
         variant: "destructive"
       });
     }

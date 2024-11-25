@@ -5,6 +5,24 @@ import { eq } from "drizzle-orm";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { YoutubeTranscript } from 'youtube-transcript';
 
+function decodeHTMLEntities(text: string): string {
+  const entities = {
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&#39;': "'",
+    '&apos;': "'",
+    '&#x27;': "'",
+    '&#x2F;': '/',
+    '&#x60;': '`',
+    '&#x3D;': '='
+  };
+  return text.replace(/&(?:amp|lt|gt|quot|#39|apos|#x27|#x2F|#x60|#x3D);/g, 
+    match => entities[match as keyof typeof entities] || match
+  );
+}
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 export function registerRoutes(app: Express) {
