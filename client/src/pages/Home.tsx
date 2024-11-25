@@ -107,10 +107,10 @@ export default function Home() {
       </div>
       <div className="space-y-2 text-center mb-12">
         <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">
-          YouTube Transcript Processor
+          YouTube Reader
         </h1>
         <p className="text-muted-foreground">
-          Transform YouTube video transcripts with AI-powered processing
+          Your AI-powered companion for enhanced video content understanding
         </p>
       </div>
 
