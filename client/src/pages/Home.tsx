@@ -157,6 +157,7 @@ export default function Home() {
             <FormatTemplateSelect
               value={selectedTemplateId}
               onChange={setSelectedTemplateId}
+              transcript={transcript}
             />
             
             <CustomFormatInput

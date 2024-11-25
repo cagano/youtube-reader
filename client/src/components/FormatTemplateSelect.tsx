@@ -13,10 +13,18 @@ interface FormatTemplateSelectProps {
   onChange: (value: number | null) => void;
 }
 
+interface Template {
+  id: number;
+  name: string;
+  description: string;
+  score?: number;
+}
+
 export default function FormatTemplateSelect({
   value,
-  onChange
-}: FormatTemplateSelectProps) {
+  onChange,
+  transcript
+}: FormatTemplateSelectProps & { transcript?: string }) {
   const { data: templates } = useQuery({
     queryKey: ["templates"],
     queryFn: async () => {
@@ -24,6 +32,26 @@ export default function FormatTemplateSelect({
       return response.json();
     }
   });
+
+  const { data: suggestions } = useQuery({
+    queryKey: ["template-suggestions", transcript],
+    queryFn: async () => {
+      if (!transcript) return [];
+      return getSuggestedTemplates(transcript);
+    },
+    enabled: !!transcript
+  });
+
+  const organizedTemplates = React.useMemo(() => {
+    if (!templates) return [];
+    if (!suggestions) return templates;
+
+    const suggestionIds = new Set(suggestions.map((s: Template) => s.id));
+    return [
+      ...suggestions,
+      ...templates.filter((t: Template) => !suggestionIds.has(t.id))
+    ];
+  }, [templates, suggestions]);
 
   return (
     <div className="space-y-2">
@@ -36,9 +64,14 @@ export default function FormatTemplateSelect({
           <SelectValue placeholder="Select a format template" />
         </SelectTrigger>
         <SelectContent>
-          {templates?.map((template: any) => (
+          {suggestions?.length > 0 && (
+            <SelectItem value="" disabled className="text-muted-foreground">
+              Suggested Templates
+            </SelectItem>
+          )}
+          {organizedTemplates?.map((template: Template) => (
             <SelectItem key={template.id} value={template.id.toString()}>
-              {template.name}
+              {template.score ? `🎯 ${template.name}` : template.name}
             </SelectItem>
           ))}
         </SelectContent>

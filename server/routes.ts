@@ -31,6 +31,39 @@ function chunkText(text: string, chunkSize: number = 30000): string[] {
   }
   return chunks;
 }
+async function suggestTemplates(transcript: string) {
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+  
+  // Take a sample of the transcript to analyze (first 1000 characters)
+  const sampleText = transcript.slice(0, 1000);
+  
+  const prompt = `Analyze this transcript sample and determine its content type and context. Return the response as a comma-separated list of relevant keywords that best describe the content (e.g., "technical,educational,programming" or "interview,business,career").
+
+Sample text:
+${sampleText}`;
+
+  const result = await model.generateContent(prompt);
+  const keywords = result.response.text().toLowerCase().split(',').map(k => k.trim());
+  
+  // Fetch all templates
+  const templates = await db.select().from(formatTemplates);
+  
+  // Score templates based on keyword matches
+  const scoredTemplates = templates.map(template => {
+    const score = keywords.reduce((acc, keyword) => {
+      return acc + (
+        template.description.toLowerCase().includes(keyword) ||
+        template.name.toLowerCase().includes(keyword) ? 1 : 0
+      );
+    }, 0);
+    return { ...template, score };
+  });
+  
+  // Sort by score and return top matches
+  return scoredTemplates
+    .sort((a, b) => b.score - a.score)
+    .filter(t => t.score > 0);
+}
 
 
 export function registerRoutes(app: Express) {
@@ -101,6 +134,25 @@ export function registerRoutes(app: Express) {
       }
 
       console.log('Using prompt:', prompt);
+  // Get template suggestions based on transcript
+  app.post("/api/suggest-templates", async (req, res) => {
+    try {
+      const { transcript } = req.body;
+      if (!transcript) {
+        return res.status(400).json({ error: "Transcript is required" });
+      }
+      
+      const suggestions = await suggestTemplates(transcript);
+      res.json(suggestions);
+    } catch (error) {
+      console.error('Template suggestion error:', error);
+      res.status(500).json({ 
+        error: "Failed to suggest templates",
+        details: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
       console.log('Model initialized');
       
