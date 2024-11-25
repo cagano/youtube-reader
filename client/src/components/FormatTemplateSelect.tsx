@@ -1,13 +1,7 @@
-import React from 'react';
+import * as React from 'react';
 import { useQuery } from "@tanstack/react-query";
 import { getSuggestedTemplates } from '../lib/api';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 
 interface FormatTemplateSelectProps {
@@ -44,40 +38,55 @@ export default function FormatTemplateSelect({
     enabled: !!transcript
   });
 
-  const organizedTemplates = React.useMemo(() => {
+  const remainingTemplates = React.useMemo(() => {
     if (!templates) return [];
     if (!suggestions) return templates;
 
     const suggestionIds = new Set(suggestions.map((s: Template) => s.id));
-    return [
-      ...suggestions,
-      ...templates.filter((t: Template) => !suggestionIds.has(t.id))
-    ];
+    return templates.filter((t: Template) => !suggestionIds.has(t.id));
   }, [templates, suggestions]);
 
   return (
-    <div className="space-y-2">
-      <Label>Format Template</Label>
-      <Select
-        value={value?.toString()}
-        onValueChange={(val) => onChange(val ? parseInt(val) : null)}
-      >
-        <SelectTrigger>
-          <SelectValue placeholder="Select a format template" />
-        </SelectTrigger>
-        <SelectContent>
-          {suggestions?.length > 0 && (
-            <SelectItem value="" disabled className="text-muted-foreground">
-              Suggested Templates
-            </SelectItem>
-          )}
-          {organizedTemplates?.map((template: Template) => (
-            <SelectItem key={template.id} value={template.id.toString()}>
-              {template.score ? `🎯 ${template.name}` : template.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+    <div className="space-y-4">
+      <Label>Format Templates</Label>
+      
+      {suggestions?.length > 0 && (
+        <>
+          <p className="text-sm text-muted-foreground mb-2">Suggested Templates</p>
+          <div className="template-buttons-container">
+            {suggestions.map((template: Template) => (
+              <Button
+                key={template.id}
+                variant={value === template.id ? "default" : "outline"}
+                className="w-full text-left flex items-center gap-2"
+                onClick={() => onChange(template.id)}
+              >
+                <span>🎯</span>
+                <div>
+                  <div>{template.name}</div>
+                  <div className="text-xs text-muted-foreground">{template.description}</div>
+                </div>
+              </Button>
+            ))}
+          </div>
+        </>
+      )}
+
+      <div className="template-buttons-container">
+        {remainingTemplates.map((template: Template) => (
+          <Button
+            key={template.id}
+            variant={value === template.id ? "default" : "outline"}
+            className="w-full text-left"
+            onClick={() => onChange(template.id)}
+          >
+            <div>
+              <div>{template.name}</div>
+              <div className="text-xs text-muted-foreground">{template.description}</div>
+            </div>
+          </Button>
+        ))}
+      </div>
     </div>
   );
 }
