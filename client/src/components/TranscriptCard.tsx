@@ -36,6 +36,9 @@ const TranscriptView: React.FC<TranscriptViewProps> = ({
   content,
   isFullScreen,
   fontSize,
+  onCopy,
+  onToggleFullScreen,
+  onFontSizeChange,
 }) => (
   <div className="relative">
     <ScrollArea className={`w-full rounded-lg border bg-muted/10 p-6 ${isFullScreen ? 'h-[calc(90vh-8rem)]' : 'h-[600px]'} transition-all duration-300 ease-out`}>
@@ -110,6 +113,25 @@ export default function TranscriptCard({
     "transform-gpu backface-hidden"
   ].join(" ");
 
+  const handleCopyClick = async () => {
+    const text = activeTab === 'original' ? original : formatted;
+    if (text) {
+      const button = document.activeElement as HTMLButtonElement;
+      button?.blur();
+      await handleCopy(text);
+    }
+  };
+
+  const handleFontSizeChange = (newSize: number) => {
+    if (newSize >= 12 && newSize <= 24) {
+      setFontSize(newSize);
+    }
+  };
+
+  const handleToggleFullScreen = () => {
+    setIsFullScreen(prev => !prev);
+  };
+
   return (
     <Card className="p-8 shadow-lg w-full max-w-none">
       <Tabs 
@@ -131,7 +153,7 @@ export default function TranscriptCard({
                       variant="outline"
                       size="sm"
                       className="opacity-90 hover:opacity-100 hover:scale-105 transition-all duration-200"
-                      onClick={() => onFontSizeChange(fontSize - 1)}
+                      onClick={() => handleFontSizeChange(fontSize - 1)}
                       disabled={fontSize <= 12}
                     >
                       <span className="font-bold">A-</span>
@@ -152,7 +174,7 @@ export default function TranscriptCard({
                       variant="outline"
                       size="sm"
                       className="opacity-90 hover:opacity-100 hover:scale-105 transition-all duration-200"
-                      onClick={() => onFontSizeChange(fontSize + 1)}
+                      onClick={() => handleFontSizeChange(fontSize + 1)}
                       disabled={fontSize >= 24}
                     >
                       <span className="font-bold">A+</span>
@@ -173,7 +195,7 @@ export default function TranscriptCard({
                     variant="outline"
                     size="sm"
                     className="opacity-90 hover:opacity-100 hover:scale-105 transition-all duration-200"
-                    onClick={onCopy}
+                    onClick={handleCopyClick}
                   >
                     <Copy className="w-4 h-4 mr-2" />
                     <span className="hidden sm:inline">Copy</span>
@@ -191,7 +213,7 @@ export default function TranscriptCard({
                     variant="outline"
                     size="sm"
                     className="opacity-90 hover:opacity-100 hover:scale-105 transition-all duration-200"
-                    onClick={onToggleFullScreen}
+                    onClick={handleToggleFullScreen}
                   >
                     {isFullScreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
                   </Button>
