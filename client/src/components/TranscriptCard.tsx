@@ -192,8 +192,7 @@ export default function TranscriptCard({
             subject: `YouTube Transcript - ${activeTab === 'original' ? 'Original' : 'Formatted'}`,
             creator: 'YouTube Reader',
             author: 'YouTube Reader',
-            keywords: 'transcript,youtube,content',
-            creationDate: new Date()
+            keywords: 'transcript,youtube,content'
           });
           
           // Add content with word wrap
