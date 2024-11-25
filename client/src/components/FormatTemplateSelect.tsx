@@ -102,25 +102,6 @@ export default function FormatTemplateSelect({
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full">
-        {/* Custom Template Option */}
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant={value === null ? "default" : "outline"}
-                className="w-full text-left flex items-center gap-3 py-4 px-5 hover:scale-[1.02] hover:shadow-md transition-all duration-200 ease-in-out"
-                onClick={() => onChange(null)}
-              >
-                {templateIcons['Custom Template']}
-                <div className="font-medium truncate">Custom Template</div>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" className="max-w-[300px]">
-              <p>Create your own custom formatting instructions</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-
         {remainingTemplates.map((template: Template) => (
           <TooltipProvider key={template.id}>
             <Tooltip>

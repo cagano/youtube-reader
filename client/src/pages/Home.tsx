@@ -23,6 +23,7 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<'original' | 'formatted'>('original');
   const [videoUrl, setVideoUrl] = useState("");
   const [customPrompt, setCustomPrompt] = useState("");
+const [isCustomTemplateSelected, setIsCustomTemplateSelected] = useState(false);
   const [selectedTemplateId, setSelectedTemplateId] = useState<number | null>(null);
   const { toast } = useToast();
 
@@ -191,11 +192,14 @@ export default function Home() {
             <div className="space-y-6">
               <FormatTemplateSelect
                 value={selectedTemplateId}
-                onChange={setSelectedTemplateId}
+                onChange={(templateId) => {
+                  setSelectedTemplateId(templateId);
+                  setIsCustomTemplateSelected(templateId === null);
+                }}
                 transcript={transcript}
               />
               
-              {!selectedTemplateId && (
+              {!selectedTemplateId && isCustomTemplateSelected && (
                 <CustomFormatInput
                   value={customPrompt}
                   onChange={setCustomPrompt}
