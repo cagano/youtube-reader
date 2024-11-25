@@ -22,12 +22,16 @@ export default function Home() {
     return match ? match[1] : null;
   };
 
-  const { data: transcript, refetch: refetchTranscript } = useQuery({
+  const { data: transcript, refetch: refetchTranscript, error: transcriptError } = useQuery({
     queryKey: ["transcript", videoUrl],
-    queryFn: () => {
+    queryFn: async () => {
       const videoId = getVideoId(videoUrl);
       if (!videoId) throw new Error("Invalid YouTube URL");
-      return fetchTranscript(videoId);
+      try {
+        return await fetchTranscript(videoId);
+      } catch (error: any) {
+        throw new Error(error.response?.data?.error || error.message || "Failed to fetch transcript");
+      }
     },
     enabled: false
   });

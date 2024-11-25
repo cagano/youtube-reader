@@ -3,7 +3,7 @@ import { db } from "../db";
 import { formatTemplates, transcriptHistory } from "@db/schema";
 import { eq } from "drizzle-orm";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import YoutubeTranscript from 'youtube-transcript';
+import { YoutubeTranscript } from 'youtube-transcript';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
@@ -22,12 +22,17 @@ export function registerRoutes(app: Express) {
   app.get("/api/transcript/:videoId", async (req, res) => {
     try {
       const { videoId } = req.params;
-      const transcript = await YoutubeTranscript.default.getTranscript(videoId);
+      console.log('Fetching transcript for video:', videoId);
+      const transcript = await YoutubeTranscript.fetchTranscript(videoId);
+      console.log('Transcript fetched successfully');
       const fullText = transcript.map((t: { text: string }) => t.text).join(" ");
       res.json({ transcript: fullText });
     } catch (error) {
       console.error('Transcript fetch error:', error);
-      res.status(500).json({ error: "Failed to fetch transcript", details: error.message });
+      res.status(500).json({ 
+        error: "Failed to fetch transcript", 
+        details: error instanceof Error ? error.message : String(error)
+      });
     }
   });
 
