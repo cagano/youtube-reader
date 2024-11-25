@@ -161,6 +161,8 @@ export default function TranscriptCard({
                 await handleCopy(original);
               }}
               onToggleFullScreen={() => setIsFullScreen(prev => !prev)}
+              fontSize={fontSize}
+              onFontSizeChange={setFontSize}
             />
           </div>
         </TabsContent>
