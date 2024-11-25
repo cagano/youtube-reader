@@ -15,12 +15,14 @@ import { useToast } from "@/hooks/use-toast";
 import TranscriptCard from "../components/TranscriptCard";
 import VideoMetadata from "../components/VideoMetadata";
 import CustomFormatInput from "../components/CustomFormatInput";
+import FormatTemplateSelect from "../components/FormatTemplateSelect";
 import { fetchTranscript, processTranscript } from "../lib/api";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<'original' | 'formatted'>('original');
   const [videoUrl, setVideoUrl] = useState("");
   const [customPrompt, setCustomPrompt] = useState("");
+  const [selectedTemplateId, setSelectedTemplateId] = useState<number | null>(null);
   const { toast } = useToast();
 
   const getVideoId = (url: string) => {
@@ -90,7 +92,8 @@ export default function Home() {
     
     processMutation.mutate({
       transcript,
-      customPrompt: customPrompt || undefined
+      templateId: selectedTemplateId || undefined,
+      customPrompt: !selectedTemplateId ? customPrompt : undefined
     });
   };
 
@@ -151,10 +154,20 @@ export default function Home() {
           <VideoMetadata videoUrl={videoUrl} />
           
           <div className="grid gap-6 mb-8 transition-all duration-500 animate-in fade-in-0 slide-in-from-bottom-4 ease-in-out">
-            <CustomFormatInput
-              value={customPrompt}
-              onChange={setCustomPrompt}
-            />
+            <div className="space-y-6">
+              <FormatTemplateSelect
+                value={selectedTemplateId}
+                onChange={setSelectedTemplateId}
+                transcript={transcript}
+              />
+              
+              {!selectedTemplateId && (
+                <CustomFormatInput
+                  value={customPrompt}
+                  onChange={setCustomPrompt}
+                />
+              )}
+            </div>
             
             <TooltipProvider>
               <Tooltip>

@@ -164,24 +164,7 @@ export function registerRoutes(app: Express) {
     }
   ];
 
-  // Get all templates with default fallback
-  app.get("/api/templates", async (req, res) => {
-    try {
-      let templates = await db.select().from(formatTemplates);
-      
-      if (templates.length === 0) {
-        // Insert default templates if none exist
-        templates = await db.insert(formatTemplates)
-          .values(defaultTemplates)
-          .returning();
-      }
-      
-      res.json(templates);
-    } catch (error) {
-      console.error('Error fetching templates:', error);
-      res.status(500).json({ error: "Failed to fetch templates" });
-    }
-  });
+  
 
   // Get template suggestions based on transcript
   app.post("/api/suggest-templates", async (req, res) => {
