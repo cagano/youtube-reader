@@ -45,7 +45,9 @@ export function registerRoutes(app: Express) {
         lang: 'en'
       });
       console.log('English transcript fetched successfully');
-      const fullText = transcript.map((t: { text: string }) => t.text).join(" ");
+      const fullText = transcript
+        .map((t: { text: string }) => decodeHTMLEntities(t.text))
+        .join(" ");
       res.json({ transcript: fullText });
     } catch (error) {
       console.error('Failed to fetch English transcript:', error);
@@ -55,7 +57,9 @@ export function registerRoutes(app: Express) {
         console.log('Attempting to fetch transcript in default language');
         const transcript = await YoutubeTranscript.fetchTranscript(videoId);
         console.log('Fallback transcript fetched successfully');
-        const fullText = transcript.map((t: { text: string }) => t.text).join(" ");
+        const fullText = transcript
+          .map((t: { text: string }) => decodeHTMLEntities(t.text))
+          .join(" ");
         res.json({ transcript: fullText });
       } catch (fallbackError) {
         console.error('Transcript fetch error:', fallbackError);
