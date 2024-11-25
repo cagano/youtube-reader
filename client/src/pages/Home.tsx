@@ -1,8 +1,15 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import TranscriptCard from "../components/TranscriptCard";
 import VideoMetadata from "../components/VideoMetadata";
@@ -11,6 +18,7 @@ import CustomFormatInput from "../components/CustomFormatInput";
 import { fetchTranscript, processTranscript } from "../lib/api";
 
 export default function Home() {
+  const [activeTab, setActiveTab] = useState<'original' | 'formatted'>('original');
   const [videoUrl, setVideoUrl] = useState("");
   const [selectedTemplateId, setSelectedTemplateId] = useState<number | null>(null);
   const [customPrompt, setCustomPrompt] = useState("");
@@ -74,6 +82,10 @@ export default function Home() {
     }
   };
 
+  const handleSwitchTab = useCallback((tab: 'original' | 'formatted') => {
+    setActiveTab(tab);
+  }, []);
+
   const handleProcessTranscript = () => {
     if (!transcript) return;
     
@@ -83,6 +95,12 @@ export default function Home() {
       customPrompt: customPrompt || undefined
     });
   };
+
+  useKeyboardShortcuts({
+    onFetchTranscript: handleFetchTranscript,
+    onProcessTranscript: handleProcessTranscript,
+    onSwitchTab: handleSwitchTab,
+  });
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-5xl">
@@ -104,13 +122,22 @@ export default function Home() {
               onChange={(e) => setVideoUrl(e.target.value)}
               className="flex-1"
             />
-            <Button 
-              onClick={handleFetchTranscript}
-              size="lg"
-              className="w-full sm:w-auto"
-            >
-              Fetch Transcript
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button 
+                    onClick={handleFetchTranscript}
+                    size="lg"
+                    className="w-full sm:w-auto"
+                  >
+                    Fetch Transcript
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Press Ctrl/Cmd + Enter</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
           <p className="text-sm text-muted-foreground">
             Paste a YouTube URL to get started with transcript processing
@@ -134,19 +161,29 @@ export default function Home() {
               disabled={!!selectedTemplateId}
             />
             
-            <Button
-              onClick={handleProcessTranscript}
-              disabled={processMutation.isPending}
-              className="w-full"
-            >
-              Process Transcript
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={handleProcessTranscript}
+                    disabled={processMutation.isPending}
+                    className="w-full"
+                  >
+                    Process Transcript
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Press Ctrl/Cmd + P</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
 
           <TranscriptCard
             original={transcript}
             formatted={processMutation.data?.formattedTranscript}
             isLoading={processMutation.isPending}
+            onSwitchTab={handleSwitchTab}
           />
         </div>
       )}

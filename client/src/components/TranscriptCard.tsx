@@ -10,12 +10,14 @@ interface TranscriptCardProps {
   original: string;
   formatted?: string;
   isLoading: boolean;
+  onSwitchTab?: (tab: 'original' | 'formatted') => void;
 }
 
 export default function TranscriptCard({
   original,
   formatted,
-  isLoading
+  isLoading,
+  onSwitchTab
 }: TranscriptCardProps) {
   const { toast } = useToast();
 
