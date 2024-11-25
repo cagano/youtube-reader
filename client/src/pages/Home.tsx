@@ -183,6 +183,7 @@ export default function Home() {
             original={transcript}
             formatted={processMutation.data?.formattedTranscript}
             isLoading={processMutation.isPending}
+            activeTab={activeTab}
             onSwitchTab={handleSwitchTab}
           />
         </div>

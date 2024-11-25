@@ -10,6 +10,7 @@ interface TranscriptCardProps {
   original: string;
   formatted?: string;
   isLoading: boolean;
+  activeTab?: 'original' | 'formatted';
   onSwitchTab?: (tab: 'original' | 'formatted') => void;
 }
 
@@ -17,6 +18,7 @@ export default function TranscriptCard({
   original,
   formatted,
   isLoading,
+  activeTab = 'original',
   onSwitchTab
 }: TranscriptCardProps) {
   const { toast } = useToast();
@@ -35,7 +37,11 @@ export default function TranscriptCard({
 
   return (
     <Card className="p-8 shadow-lg">
-      <Tabs defaultValue="original" className="w-full">
+      <Tabs 
+        value={activeTab}
+        onValueChange={(value) => onSwitchTab?.(value as 'original' | 'formatted')}
+        className="w-full"
+      >
         <div className="flex items-center justify-between mb-6">
           <TabsList>
             <TabsTrigger value="original" className="text-base">Original</TabsTrigger>
