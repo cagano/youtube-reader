@@ -54,12 +54,12 @@ export default function FormatTemplateSelect({
       {suggestions?.length > 0 && (
         <>
           <p className="text-sm text-muted-foreground mb-2">Suggested Templates</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full">
             {suggestions.map((template: Template) => (
               <Button
                 key={template.id}
                 variant={value === template.id ? "default" : "outline"}
-                className="w-full text-left flex items-center gap-2 h-auto py-3 px-4"
+                className="w-full text-left flex items-center gap-2 h-full min-h-[80px] py-4 px-5"
                 onClick={() => onChange(template.id)}
               >
                 <span>🎯</span>
@@ -73,12 +73,12 @@ export default function FormatTemplateSelect({
         </>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full">
         {remainingTemplates.map((template: Template) => (
           <Button
             key={template.id}
             variant={value === template.id ? "default" : "outline"}
-            className="w-full text-left h-auto py-3 px-4"
+            className="w-full text-left h-full min-h-[80px] py-4 px-5"
             onClick={() => onChange(template.id)}
           >
             <div>
