@@ -52,11 +52,19 @@ export default function Home() {
 
   const handleFetchTranscript = async () => {
     try {
+      if (!videoUrl.trim()) {
+        toast({
+          title: "Error",
+          description: "Please enter a valid YouTube URL",
+          variant: "destructive"
+        });
+        return;
+      }
       await refetchTranscript();
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to fetch transcript",
+        description: error.message || "Failed to fetch transcript",
         variant: "destructive"
       });
     }

@@ -22,11 +22,12 @@ export function registerRoutes(app: Express) {
   app.get("/api/transcript/:videoId", async (req, res) => {
     try {
       const { videoId } = req.params;
-      const transcript = await YoutubeTranscript.fetchTranscript(videoId);
+      const transcript = await YoutubeTranscript.default.getTranscript(videoId);
       const fullText = transcript.map((t: { text: string }) => t.text).join(" ");
       res.json({ transcript: fullText });
     } catch (error) {
-      res.status(500).json({ error: "Failed to fetch transcript" });
+      console.error('Transcript fetch error:', error);
+      res.status(500).json({ error: "Failed to fetch transcript", details: error.message });
     }
   });
 
