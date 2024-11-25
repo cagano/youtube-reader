@@ -131,7 +131,7 @@ export default function TranscriptCard({
 
   const contentClass = "transition-all duration-500 ease-in-out animate-in fade-in-0 slide-in-from-left-4";
   const loadingClass = "animate-pulse transition-all duration-500 ease-in-out";
-  const tabContentClass = "transition-all duration-300 ease-in-out animate-in fade-in-0 data-[state=inactive]:animate-out data-[state=inactive]:fade-out-0 data-[state=active]:slide-in-from-right-1";
+  const tabContentClass = "animate-in fade-in-0 data-[state=inactive]:animate-out data-[state=inactive]:fade-out-0 data-[state=active]:slide-in-from-right-1";
 
   return (
     <Card className="p-8 shadow-lg w-full max-w-none">
