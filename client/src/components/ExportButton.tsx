@@ -9,7 +9,8 @@ import {
 } from './ui/dropdown-menu';
 import { saveAs } from 'file-saver';
 import { pdf } from '@react-pdf/renderer';
-import { Document, Page, Text, StyleSheet } from '@react-pdf/renderer';
+import { Document, Page, Text, StyleSheet, View } from '@react-pdf/renderer';
+import Markdown from 'markdown-to-jsx';
 
 interface ExportButtonProps {
   content: string;
@@ -82,10 +83,39 @@ export function ExportButton({ content, fileName = 'transcript' }: ExportButtonP
     switch (format) {
       case 'pdf': {
         // Create PDF document
+        // Custom components for markdown elements
+        const MarkdownH1 = ({ children }) => <Text style={styles.heading1}>{children}</Text>;
+        const MarkdownH2 = ({ children }) => <Text style={styles.heading2}>{children}</Text>;
+        const MarkdownH3 = ({ children }) => <Text style={styles.heading3}>{children}</Text>;
+        const MarkdownParagraph = ({ children }) => <Text style={styles.text}>{children}</Text>;
+        const MarkdownBold = ({ children }) => <Text style={styles.bold}>{children}</Text>;
+        const MarkdownItalic = ({ children }) => <Text style={styles.italic}>{children}</Text>;
+        const MarkdownCode = ({ children }) => <Text style={styles.codeBlock}>{children}</Text>;
+        const MarkdownListItem = ({ children }) => (
+          <View style={styles.listItem}>
+            <Text style={styles.listItemBullet}>• </Text>
+            <Text style={styles.listItemContent}>{children}</Text>
+          </View>
+        );
+
+        // Configure markdown options
+        const options = {
+          overrides: {
+            h1: { component: MarkdownH1 },
+            h2: { component: MarkdownH2 },
+            h3: { component: MarkdownH3 },
+            p: { component: MarkdownParagraph },
+            strong: { component: MarkdownBold },
+            em: { component: MarkdownItalic },
+            code: { component: MarkdownCode },
+            li: { component: MarkdownListItem },
+          },
+        };
+
         const MyDocument = () => (
           <Document>
             <Page size="A4" style={styles.page}>
-              <Text style={styles.text}>{content}</Text>
+              <Markdown options={options}>{content}</Markdown>
             </Page>
           </Document>
         );
