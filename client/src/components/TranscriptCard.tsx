@@ -37,47 +37,81 @@ const TranscriptView: React.FC<TranscriptViewProps> = ({
   <div className="relative">
     <div className="absolute right-4 top-4 z-10 flex gap-2">
       <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          className="opacity-90 hover:opacity-100 transition-opacity"
-          onClick={() => onFontSizeChange(fontSize - 1)}
-          disabled={fontSize <= 12}
-        >
-          <span className="font-bold">A-</span>
-          <span className="sr-only">Decrease font size</span>
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="opacity-90 hover:opacity-100 hover:scale-105 transition-all duration-200"
+                onClick={() => onFontSizeChange(fontSize - 1)}
+                disabled={fontSize <= 12}
+              >
+                <span className="font-bold">A-</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Decrease font size</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        
         <span className="text-sm font-medium text-muted-foreground">{fontSize}px</span>
-        <Button
-          variant="outline"
-          size="sm"
-          className="opacity-90 hover:opacity-100 transition-opacity"
-          onClick={() => onFontSizeChange(fontSize + 1)}
-          disabled={fontSize >= 24}
-        >
-          <span className="font-bold">A+</span>
-          <span className="sr-only">Increase font size</span>
-        </Button>
+        
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="opacity-90 hover:opacity-100 hover:scale-105 transition-all duration-200"
+                onClick={() => onFontSizeChange(fontSize + 1)}
+                disabled={fontSize >= 24}
+              >
+                <span className="font-bold">A+</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Increase font size</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
-      <Button
-        variant="outline"
-        size="sm"
-        className="opacity-90 hover:opacity-100 transition-opacity"
-        onClick={onCopy}
-      >
-        <Copy className="w-4 h-4 mr-2" />
-        <span>Copy</span>
-        <span className="sr-only">Copy text</span>
-      </Button>
-      <Button
-        variant="outline"
-        size="sm"
-        className="opacity-90 hover:opacity-100 transition-opacity"
-        onClick={onToggleFullScreen}
-      >
-        {isFullScreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-        <span className="sr-only">Toggle full screen</span>
-      </Button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="opacity-90 hover:opacity-100 hover:scale-105 transition-all duration-200"
+              onClick={onCopy}
+            >
+              <Copy className="w-4 h-4 mr-2" />
+              <span>Copy</span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Copy text to clipboard</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="opacity-90 hover:opacity-100 hover:scale-105 transition-all duration-200"
+              onClick={onToggleFullScreen}
+            >
+              {isFullScreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{isFullScreen ? 'Exit full screen (Alt + F)' : 'Enter full screen (Alt + F)'}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </div>
     <ScrollArea className={`w-full rounded-lg border bg-muted/10 p-6 ${isFullScreen ? 'h-[90vh]' : 'h-[600px]'} transition-all duration-300 ease-out`}>
       <div className="prose prose-gray dark:prose-invert max-w-none" style={{ fontSize: `${fontSize}px` }}>

@@ -59,7 +59,7 @@ export default function FormatTemplateSelect({
               <Button
                 key={template.id}
                 variant={value === template.id ? "default" : "outline"}
-                className="w-full text-left flex items-center gap-2 h-full min-h-[80px] py-4 px-5"
+                className="w-full text-left flex items-center gap-2 h-full min-h-[80px] py-4 px-5 hover:scale-[1.02] hover:shadow-md transition-all duration-200 ease-in-out"
                 onClick={() => onChange(template.id)}
               >
                 <span>🎯</span>
@@ -78,7 +78,7 @@ export default function FormatTemplateSelect({
           <Button
             key={template.id}
             variant={value === template.id ? "default" : "outline"}
-            className="w-full text-left h-full min-h-[80px] py-4 px-5"
+            className="w-full text-left h-full min-h-[80px] py-4 px-5 hover:scale-[1.02] hover:shadow-md transition-all duration-200 ease-in-out"
             onClick={() => onChange(template.id)}
           >
             <div>
