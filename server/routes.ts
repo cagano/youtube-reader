@@ -22,17 +22,29 @@ export function registerRoutes(app: Express) {
   app.get("/api/transcript/:videoId", async (req, res) => {
     try {
       const { videoId } = req.params;
-      console.log('Fetching transcript for video:', videoId);
-      const transcript = await YoutubeTranscript.fetchTranscript(videoId);
-      console.log('Transcript fetched successfully');
+      console.log('Fetching English transcript for video:', videoId);
+      const transcript = await YoutubeTranscript.fetchTranscript(videoId, {
+        lang: 'en'
+      });
+      console.log('English transcript fetched successfully');
       const fullText = transcript.map((t: { text: string }) => t.text).join(" ");
       res.json({ transcript: fullText });
     } catch (error) {
-      console.error('Transcript fetch error:', error);
-      res.status(500).json({ 
-        error: "Failed to fetch transcript", 
-        details: error instanceof Error ? error.message : String(error)
-      });
+      console.error('Failed to fetch English transcript:', error);
+      // Try fetching default language transcript as fallback
+      try {
+        console.log('Attempting to fetch transcript in default language');
+        const transcript = await YoutubeTranscript.fetchTranscript(videoId);
+        console.log('Fallback transcript fetched successfully');
+        const fullText = transcript.map((t: { text: string }) => t.text).join(" ");
+        res.json({ transcript: fullText });
+      } catch (fallbackError) {
+        console.error('Transcript fetch error:', fallbackError);
+        res.status(500).json({ 
+          error: "Failed to fetch transcript", 
+          details: fallbackError instanceof Error ? fallbackError.message : String(fallbackError)
+        });
+      }
     }
   });
 
