@@ -4,13 +4,11 @@ import { Label } from "@/components/ui/label";
 interface CustomFormatInputProps {
   value: string;
   onChange: (value: string) => void;
-  disabled?: boolean;
 }
 
 export default function CustomFormatInput({
   value,
-  onChange,
-  disabled
+  onChange
 }: CustomFormatInputProps) {
   return (
     <div className="space-y-2">
@@ -19,14 +17,8 @@ export default function CustomFormatInput({
         placeholder="Enter custom formatting instructions..."
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        disabled={disabled}
         className="min-h-[100px]"
       />
-      {disabled && (
-        <p className="text-sm text-muted-foreground">
-          Disabled while a template is selected
-        </p>
-      )}
     </div>
   );
 }
