@@ -19,13 +19,58 @@ interface ExportButtonProps {
 // PDF styles
 const styles = StyleSheet.create({
   page: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     backgroundColor: '#ffffff',
     padding: 40,
   },
   text: {
     fontSize: 12,
     fontFamily: 'Helvetica',
+    marginBottom: 12,
+    lineHeight: 1.5,
+  },
+  heading1: {
+    fontSize: 24,
+    fontFamily: 'Helvetica-Bold',
+    marginBottom: 16,
+    marginTop: 24,
+  },
+  heading2: {
+    fontSize: 20,
+    fontFamily: 'Helvetica-Bold',
+    marginBottom: 14,
+    marginTop: 20,
+  },
+  heading3: {
+    fontSize: 16,
+    fontFamily: 'Helvetica-Bold',
+    marginBottom: 12,
+    marginTop: 16,
+  },
+  bold: {
+    fontFamily: 'Helvetica-Bold',
+  },
+  italic: {
+    fontFamily: 'Helvetica-Oblique',
+  },
+  listItem: {
+    flexDirection: 'row',
+    marginBottom: 8,
+    paddingLeft: 16,
+  },
+  listItemBullet: {
+    width: 16,
+    marginRight: 8,
+  },
+  listItemContent: {
+    flex: 1,
+  },
+  codeBlock: {
+    fontFamily: 'Courier',
+    backgroundColor: '#f5f5f5',
+    padding: 8,
+    marginVertical: 8,
+    borderRadius: 4,
   },
 });
 
