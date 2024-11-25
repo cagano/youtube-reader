@@ -134,6 +134,44 @@ export function registerRoutes(app: Express) {
       }
 
       console.log('Using prompt:', prompt);
+  // Default templates for initial setup
+  const defaultTemplates = [
+    {
+      name: "Summary",
+      description: "Create a concise summary of the content",
+      prompt: "Summarize the following transcript in a clear and concise way:"
+    },
+    {
+      name: "Key Points",
+      description: "Extract main points and insights",
+      prompt: "Extract the key points and important insights from this transcript:"
+    },
+    {
+      name: "Q&A Format",
+      description: "Convert content into Q&A format",
+      prompt: "Convert this transcript into a Q&A format, identifying questions and their answers:"
+    }
+  ];
+
+  // Get all templates with default fallback
+  app.get("/api/templates", async (req, res) => {
+    try {
+      let templates = await db.select().from(formatTemplates);
+      
+      if (templates.length === 0) {
+        // Insert default templates if none exist
+        templates = await db.insert(formatTemplates)
+          .values(defaultTemplates)
+          .returning();
+      }
+      
+      res.json(templates);
+    } catch (error) {
+      console.error('Error fetching templates:', error);
+      res.status(500).json({ error: "Failed to fetch templates" });
+    }
+  });
+
   // Get template suggestions based on transcript
   app.post("/api/suggest-templates", async (req, res) => {
     try {

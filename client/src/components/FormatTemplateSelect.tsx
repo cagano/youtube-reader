@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { useQuery } from "@tanstack/react-query";
 import { getSuggestedTemplates } from '../lib/api';
 import { Button } from "@/components/ui/button";
