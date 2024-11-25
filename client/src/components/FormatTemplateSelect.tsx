@@ -3,6 +3,20 @@ import { useQuery } from "@tanstack/react-query";
 import { getSuggestedTemplates } from '../lib/api';
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { 
+  FileText, 
+  List, 
+  MessageSquare, 
+  Book, 
+  HelpCircle,
+  Target
+} from 'lucide-react';
 
 interface FormatTemplateSelectProps {
   value: number | null;
@@ -16,6 +30,14 @@ interface Template {
   description: string;
   score?: number;
 }
+
+// Map template names to icons
+const templateIcons: Record<string, React.ReactNode> = {
+  'Summary': <FileText className="w-4 h-4" />,
+  'Q&A Format': <MessageSquare className="w-4 h-4" />,
+  'Chapter Outline': <List className="w-4 h-4" />,
+  'Study Notes': <Book className="w-4 h-4" />,
+};
 
 export default function FormatTemplateSelect({
   value,
@@ -56,18 +78,23 @@ export default function FormatTemplateSelect({
           <p className="text-sm text-muted-foreground mb-2">Suggested Templates</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full">
             {suggestions.map((template: Template) => (
-              <Button
-                key={template.id}
-                variant={value === template.id ? "default" : "outline"}
-                className="w-full text-left flex items-center gap-2 h-full min-h-[80px] py-4 px-5 hover:scale-[1.02] hover:shadow-md transition-all duration-200 ease-in-out"
-                onClick={() => onChange(template.id)}
-              >
-                <span>🎯</span>
-                <div>
-                  <div className="font-medium">{template.name}</div>
-                  <div className="text-xs text-muted-foreground mt-1">{template.description}</div>
-                </div>
-              </Button>
+              <TooltipProvider key={template.id}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant={value === template.id ? "default" : "outline"}
+                      className="w-full text-left flex items-center gap-3 py-4 px-5 hover:scale-[1.02] hover:shadow-md transition-all duration-200 ease-in-out"
+                      onClick={() => onChange(template.id)}
+                    >
+                      <Target className="w-5 h-5 flex-shrink-0" />
+                      <div className="font-medium truncate">{template.name}</div>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="max-w-[300px]">
+                    <p>{template.description}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             ))}
           </div>
         </>
@@ -75,17 +102,23 @@ export default function FormatTemplateSelect({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full">
         {remainingTemplates.map((template: Template) => (
-          <Button
-            key={template.id}
-            variant={value === template.id ? "default" : "outline"}
-            className="w-full text-left h-full min-h-[80px] py-4 px-5 hover:scale-[1.02] hover:shadow-md transition-all duration-200 ease-in-out"
-            onClick={() => onChange(template.id)}
-          >
-            <div>
-              <div className="font-medium">{template.name}</div>
-              <div className="text-xs text-muted-foreground mt-1">{template.description}</div>
-            </div>
-          </Button>
+          <TooltipProvider key={template.id}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant={value === template.id ? "default" : "outline"}
+                  className="w-full text-left flex items-center gap-3 py-4 px-5 hover:scale-[1.02] hover:shadow-md transition-all duration-200 ease-in-out"
+                  onClick={() => onChange(template.id)}
+                >
+                  {templateIcons[template.name] || <HelpCircle className="w-5 h-5 flex-shrink-0" />}
+                  <div className="font-medium truncate">{template.name}</div>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="max-w-[300px]">
+                <p>{template.description}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         ))}
       </div>
     </div>
