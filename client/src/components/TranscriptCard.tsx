@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { useViewportSize } from "@/hooks/use-viewport-size";
 import ReactMarkdown from "react-markdown";
 import { Copy, Maximize2, Minimize2 } from "lucide-react";
 import { Card } from "./ui/card";
@@ -39,17 +40,31 @@ const TranscriptView: React.FC<TranscriptViewProps> = ({
   onCopy,
   onToggleFullScreen,
   onFontSizeChange,
-}) => (
-  <div className="relative">
-    <ScrollArea className={`w-full rounded-lg border bg-muted/10 p-6 ${isFullScreen ? 'h-[calc(90vh-8rem)]' : 'h-[600px]'} transition-all duration-300 ease-out`}>
-      <div className="prose prose-gray dark:prose-invert max-w-none" style={{ fontSize: `${fontSize}px` }}>
+}) => {
+  const { height: viewportHeight } = useViewportSize();
+  
+  const contentHeight = useMemo(() => {
+    if (isFullScreen) {
+      // In fullscreen, use 90% of viewport height minus header space
+      return `calc(${viewportHeight * 0.9}px - 8rem)`;
+    }
+    // In normal mode, use responsive height based on viewport
+    const baseHeight = Math.min(Math.max(viewportHeight * 0.6, 400), 800);
+    return `${baseHeight}px`;
+  }, [viewportHeight, isFullScreen]);
+
+  return (
+    <div className="relative">
+      <ScrollArea className={`w-full rounded-lg border bg-muted/10 p-6 transition-all duration-300 ease-out`} style={{ height: contentHeight }}>
+        <div className="prose prose-gray dark:prose-invert max-w-none" style={{ fontSize: `${fontSize}px` }}>
         <ReactMarkdown className="whitespace-pre-wrap break-words">
           {content}
         </ReactMarkdown>
       </div>
     </ScrollArea>
   </div>
-);
+  );
+};
 
 export default function TranscriptCard({
   original,
@@ -274,7 +289,7 @@ export default function TranscriptCard({
       </Tabs>
 
       <Dialog open={isFullScreen} onOpenChange={setIsFullScreen}>
-        <DialogContent className="max-w-[95vw] w-full h-[95vh] p-6 overflow-hidden flex flex-col">
+        <DialogContent className="max-w-[95vw] w-full h-[95vh] max-h-[95vh] p-6 overflow-hidden flex flex-col">
           <DialogTitle className="sr-only">Full Screen Transcript View</DialogTitle>
           <DialogDescription className="sr-only">
             Full screen view of the transcript with enhanced readability
