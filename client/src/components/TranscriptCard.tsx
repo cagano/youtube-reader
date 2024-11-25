@@ -129,13 +129,14 @@ export default function TranscriptCard({
     }
   };
 
-  const contentClass = "transition-all duration-300 ease-out animate-in fade-in-0 slide-in-from-left-4";
-  const loadingClass = "animate-pulse transition-all duration-300 ease-out";
+  const contentClass = "transition-all duration-500 ease-out animate-in fade-in-50 slide-in-from-left-8 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-left-8";
+  const loadingClass = "animate-pulse transition-all duration-500 ease-out";
   const tabContentClass = [
-    "animate-in fade-in-0 zoom-in-95",
-    "data-[state=inactive]:animate-out data-[state=inactive]:fade-out-0 data-[state=inactive]:zoom-out-95",
-    "data-[state=active]:slide-in-from-right-1",
-    "transition-all duration-300 ease-out"
+    "animate-in fade-in-0 zoom-in-98",
+    "data-[state=inactive]:animate-out data-[state=inactive]:fade-out-0 data-[state=inactive]:zoom-out-95 data-[state=inactive]:slide-out-to-left-8",
+    "data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:slide-in-from-right-8 data-[state=active]:zoom-in-98",
+    "transition-all duration-500 ease-in-out motion-reduce:transition-none",
+    "transform-gpu backface-hidden"
   ].join(" ");
 
   return (
