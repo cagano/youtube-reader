@@ -5,6 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Copy } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import ReactMarkdown from 'react-markdown';
 
 interface TranscriptCardProps {
   original: string;
@@ -79,7 +80,9 @@ export default function TranscriptCard({
             </Button>
             <ScrollArea className="h-[600px] w-full rounded-lg border bg-muted/10 p-6">
               <div className={`prose prose-gray dark:prose-invert max-w-none ${contentClass}`}>
-                {original}
+                <ReactMarkdown className="whitespace-pre-wrap break-words">
+                  {original}
+                </ReactMarkdown>
               </div>
             </ScrollArea>
           </div>
@@ -111,7 +114,9 @@ export default function TranscriptCard({
                 </Button>
                 <ScrollArea className="h-[600px] w-full rounded-lg border bg-muted/10 p-6">
                   <div className={`prose prose-gray dark:prose-invert max-w-none ${contentClass}`}>
-                    {formatted}
+                    <ReactMarkdown className="whitespace-pre-wrap break-words">
+                      {formatted}
+                    </ReactMarkdown>
                   </div>
                 </ScrollArea>
               </>
