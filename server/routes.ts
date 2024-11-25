@@ -24,6 +24,14 @@ function decodeHTMLEntities(text: string): string {
 }
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+function chunkText(text: string, chunkSize: number = 30000): string[] {
+  const chunks: string[] = [];
+  for (let i = 0; i < text.length; i += chunkSize) {
+    chunks.push(text.slice(i, i + chunkSize));
+  }
+  return chunks;
+}
+
 
 export function registerRoutes(app: Express) {
   // Get format templates
@@ -93,19 +101,28 @@ export function registerRoutes(app: Express) {
       }
 
       console.log('Using prompt:', prompt);
-      const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" }); // Change to gemini-pro
+      const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
       console.log('Model initialized');
       
-      const result = await model.generateContent(
-        `${prompt}
+      // Split transcript into chunks
+      const chunks = chunkText(transcript);
+      const results: string[] = [];
 
-Transcript:
-${transcript}`
-      );
-      console.log('Content generated');
-      
-      const formattedText = result.response.text();
-      console.log('Response text extracted');
+      // Process each chunk
+      for (const chunk of chunks) {
+        const result = await model.generateContent(
+          `${prompt}
+
+Transcript chunk:
+${chunk}`
+        );
+        results.push(result.response.text());
+        console.log('Chunk processed');
+      }
+
+      // Combine results
+      const formattedText = results.join("\n\n");
+      console.log('All chunks combined');
 
       res.json({ formattedTranscript: formattedText });
     } catch (error) {
