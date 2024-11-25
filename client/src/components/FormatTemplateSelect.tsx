@@ -54,18 +54,18 @@ export default function FormatTemplateSelect({
       {suggestions?.length > 0 && (
         <>
           <p className="text-sm text-muted-foreground mb-2">Suggested Templates</p>
-          <div className="template-buttons-container">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {suggestions.map((template: Template) => (
               <Button
                 key={template.id}
                 variant={value === template.id ? "default" : "outline"}
-                className="w-full text-left flex items-center gap-2"
+                className="w-full text-left flex items-center gap-2 h-auto py-3 px-4"
                 onClick={() => onChange(template.id)}
               >
                 <span>🎯</span>
                 <div>
-                  <div>{template.name}</div>
-                  <div className="text-xs text-muted-foreground">{template.description}</div>
+                  <div className="font-medium">{template.name}</div>
+                  <div className="text-xs text-muted-foreground mt-1">{template.description}</div>
                 </div>
               </Button>
             ))}
@@ -73,17 +73,17 @@ export default function FormatTemplateSelect({
         </>
       )}
 
-      <div className="template-buttons-container">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {remainingTemplates.map((template: Template) => (
           <Button
             key={template.id}
             variant={value === template.id ? "default" : "outline"}
-            className="w-full text-left"
+            className="w-full text-left h-auto py-3 px-4"
             onClick={() => onChange(template.id)}
           >
             <div>
-              <div>{template.name}</div>
-              <div className="text-xs text-muted-foreground">{template.description}</div>
+              <div className="font-medium">{template.name}</div>
+              <div className="text-xs text-muted-foreground mt-1">{template.description}</div>
             </div>
           </Button>
         ))}
